@@ -1,0 +1,73 @@
+/* Vehicles panel specific styles */
+
+.toolbar-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn-group {
+    display: flex;
+    gap: 4px;
+}
+
+.vehicle-type-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.vehicle-type-icon i {
+    color: var(--accent-blue);
+}
+
+/* Vehicle details modal */
+.vehicle-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.detail-section {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.detail-section h4 {
+    color: var(--accent-blue);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+}
+
+.detail-label {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.detail-value {
+    color: var(--text-bright);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.vehicle-history-section {
+    margin-top: 20px;
+}
+
+.vehicle-history-section h4 {
+    color: var(--text-bright);
+    font-size: 14px;
+    margin-bottom: 12px;
+}
