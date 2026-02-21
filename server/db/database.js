@@ -27,9 +27,15 @@ const SCHEMA = [
 async function initDatabase() {
     if (db) return db;
 
-    var sqliteOptions = isVercel ? {
-        locateFile: function(file) { return 'https://sql.js.org/dist/' + file; }
-    } : {};
+    var sqliteOptions = {};
+    try {
+        var wasmDir = path.dirname(require.resolve('sql.js'));
+        var wasmPath2 = path.join(wasmDir, 'sql-wasm.wasm');
+        sqliteOptions.wasmBinary = fs.readFileSync(wasmPath2);
+    } catch (e) {
+        console.log('WASM file not found locally, using CDN fallback');
+        sqliteOptions.locateFile = function(file) { return 'https://sql.js.org/dist/' + file; };
+    }
     var SQL = await initSqlJs(sqliteOptions);
 
     if (!isVercel && dbPath && fs.existsSync(dbPath)) {
