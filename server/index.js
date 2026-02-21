@@ -8,12 +8,36 @@ const seed = require('./db/seed');
 
 const app = express();
 
+// Lazy database initialization (works for both local and serverless)
+let dbReady = false;
+let dbInitPromise = null;
+
+app.use(async (req, res, next) => {
+    if (!dbReady) {
+        if (!dbInitPromise) {
+            dbInitPromise = (async () => {
+                await initDatabase();
+                await seed();
+                dbReady = true;
+                console.log('Database initialized and seeded.');
+            })();
+        }
+        try {
+            await dbInitPromise;
+        } catch (err) {
+            console.error('DB init failed:', err);
+            return res.status(500).json({ error: 'Server initializing, please retry' });
+        }
+    }
+    next();
+});
+
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from public directory
+// Serve static files from public directory (used in local dev)
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // API Routes
@@ -31,7 +55,7 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', version: '2.0.0', timestamp: new Date().toISOString() });
 });
 
-// SPA fallback - serve index.html for all non-API routes
+// SPA fallback - serve index.html for all non-API routes (local dev)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
@@ -39,30 +63,11 @@ app.get('*', (req, res) => {
 // Error handling
 app.use(errorHandler);
 
-// Initialize database, seed, then start server
-async function start() {
-    try {
-        await initDatabase();
-        console.log('Database initialized.');
-
-        await seed();
-        console.log('Database seeded.');
-
-        app.listen(config.port, () => {
-            console.log(`
-╔══════════════════════════════════════════════╗
-║   Vehicle Mileage Tracker Server v2.0.0      ║
-║   Running on http://localhost:${config.port}            ║
-║   Environment: ${process.env.NODE_ENV || 'development'}               ║
-╚══════════════════════════════════════════════╝
-            `);
-        });
-    } catch (err) {
-        console.error('Failed to start server:', err);
-        process.exit(1);
-    }
+// Only start listener when running directly (not on Vercel)
+if (!process.env.VERCEL) {
+    app.listen(config.port, () => {
+        console.log(`Server running on http://localhost:${config.port}`);
+    });
 }
-
-start();
 
 module.exports = app;

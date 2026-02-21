@@ -6,8 +6,9 @@ const fs = require('fs');
 const { execute } = require('../db/database');
 const { authenticate, requireAdmin } = require('../middleware/auth');
 
+const os = require('os');
 const router = express.Router();
-const upload = multer({ dest: path.join(__dirname, '../../uploads/') });
+const upload = multer({ dest: os.tmpdir() });
 
 function parseFile(filePath) {
     const workbook = XLSX.readFile(filePath);

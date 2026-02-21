@@ -5,3 +5,5 @@ server/db/*.db
 .DS_Store
 .DS_Store
 Thumbs.db
+.vercel
+uploads/
