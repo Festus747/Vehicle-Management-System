@@ -1,0 +1,382 @@
+/* =============================================
+   Theme System - Multiple Theme Support
+   ============================================= */
+
+/* --- Dark Theme (Default) --- */
+[data-theme="dark"] {
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #252526;
+    --bg-tertiary: #2d2d2d;
+    --bg-hover: #2a2d2e;
+    --bg-active: #37373d;
+    --bg-input: #3c3c3c;
+    --bg-sidebar: #252526;
+    --bg-editor: #1e1e1e;
+    --bg-titlebar: #323233;
+    --bg-statusbar: #007acc;
+    --bg-activitybar: #333333;
+    --bg-tab: #2d2d2d;
+    --bg-tab-active: #1e1e1e;
+    --text-primary: #cccccc;
+    --text-secondary: #969696;
+    --text-muted: #6a6a6a;
+    --text-bright: #ffffff;
+    --text-link: #3794ff;
+    --border-color: #474747;
+    --border-light: #3c3c3c;
+    --accent-blue: #007acc;
+    --accent-green: #4ec9b0;
+    --accent-red: #f14c4c;
+    --accent-yellow: #cca700;
+    --accent-orange: #ce9178;
+    --accent-purple: #c586c0;
+    --status-normal: #4ec9b0;
+    --status-warning: #cca700;
+    --status-exceeded: #f14c4c;
+    --scrollbar-bg: transparent;
+    --scrollbar-thumb: rgba(121, 121, 121, 0.4);
+    --scrollbar-thumb-hover: rgba(100, 100, 100, 0.7);
+    --shadow-color: rgba(0,0,0,0.4);
+    --card-bg: #2d2d2d;
+    --modal-overlay: rgba(0,0,0,0.6);
+    --login-gradient: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 25%, #0d2137 50%, #0f3460 75%, #1a1a2e 100%);
+}
+
+/* --- Light Theme --- */
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f3f3;
+    --bg-tertiary: #ececec;
+    --bg-hover: #e8e8e8;
+    --bg-active: #d4d4d4;
+    --bg-input: #ffffff;
+    --bg-sidebar: #f3f3f3;
+    --bg-editor: #ffffff;
+    --bg-titlebar: #dddddd;
+    --bg-statusbar: #007acc;
+    --bg-activitybar: #e8e8e8;
+    --bg-tab: #ececec;
+    --bg-tab-active: #ffffff;
+    --text-primary: #333333;
+    --text-secondary: #616161;
+    --text-muted: #999999;
+    --text-bright: #000000;
+    --text-link: #006ab1;
+    --border-color: #cecece;
+    --border-light: #e5e5e5;
+    --accent-blue: #007acc;
+    --accent-green: #16825d;
+    --accent-red: #cd3131;
+    --accent-yellow: #bf8803;
+    --accent-orange: #c45221;
+    --accent-purple: #af00db;
+    --status-normal: #16825d;
+    --status-warning: #bf8803;
+    --status-exceeded: #cd3131;
+    --scrollbar-bg: transparent;
+    --scrollbar-thumb: rgba(100, 100, 100, 0.3);
+    --scrollbar-thumb-hover: rgba(100, 100, 100, 0.5);
+    --shadow-color: rgba(0,0,0,0.1);
+    --card-bg: #ffffff;
+    --modal-overlay: rgba(0,0,0,0.3);
+    --login-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #6B8DD6 50%, #8E37D7 75%, #667eea 100%);
+}
+
+[data-theme="light"] .login-container {
+    background: rgba(255,255,255,0.95);
+    color: #333;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+[data-theme="light"] .login-container input,
+[data-theme="light"] .login-container select {
+    background: #f3f3f3;
+    border-color: #cecece;
+    color: #333;
+}
+[data-theme="light"] .data-table th { background: #e8e8e8; color: #333; }
+[data-theme="light"] .data-table tr:hover { background: #f0f0f0; }
+[data-theme="light"] .stat-card { background: #f8f8f8; border: 1px solid #e0e0e0; }
+[data-theme="light"] .chart-card { background: #f8f8f8; border: 1px solid #e0e0e0; }
+[data-theme="light"] .alert-item { background: #f8f8f8; border-left-width: 3px; }
+[data-theme="light"] .toast { background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+[data-theme="light"] .modal-container { background: #ffffff; }
+[data-theme="light"] .modal-header { background: #f3f3f3; border-bottom: 1px solid #e0e0e0; }
+[data-theme="light"] .modal-footer { background: #f3f3f3; border-top: 1px solid #e0e0e0; }
+[data-theme="light"] .settings-section { background: #f8f8f8; }
+
+/* --- High Contrast --- */
+[data-theme="high-contrast"] {
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-tertiary: #111111;
+    --bg-hover: #1a1a1a;
+    --bg-active: #222222;
+    --bg-input: #1a1a1a;
+    --bg-sidebar: #0a0a0a;
+    --bg-editor: #000000;
+    --bg-titlebar: #111111;
+    --bg-statusbar: #007acc;
+    --bg-activitybar: #111111;
+    --bg-tab: #111111;
+    --bg-tab-active: #000000;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #b0b0b0;
+    --text-bright: #ffffff;
+    --text-link: #6fc3ff;
+    --border-color: #6fc3ff;
+    --border-light: #444444;
+    --accent-blue: #6fc3ff;
+    --accent-green: #73e068;
+    --accent-red: #ff6b6b;
+    --accent-yellow: #ffd700;
+    --accent-orange: #ffa500;
+    --accent-purple: #e080ff;
+    --status-normal: #73e068;
+    --status-warning: #ffd700;
+    --status-exceeded: #ff6b6b;
+    --scrollbar-bg: #000000;
+    --scrollbar-thumb: rgba(255, 255, 255, 0.4);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.6);
+    --shadow-color: rgba(0,0,0,0.8);
+    --card-bg: #111111;
+    --modal-overlay: rgba(0,0,0,0.8);
+    --login-gradient: linear-gradient(135deg, #000000 0%, #0a0a2e 50%, #000000 100%);
+}
+
+[data-theme="high-contrast"] .stat-card,
+[data-theme="high-contrast"] .chart-card,
+[data-theme="high-contrast"] .alert-item,
+[data-theme="high-contrast"] .settings-section {
+    border: 1px solid var(--border-color);
+}
+
+/* --- Midnight Blue --- */
+[data-theme="midnight"] {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #1c2128;
+    --bg-hover: #1f2937;
+    --bg-active: #263040;
+    --bg-input: #21262d;
+    --bg-sidebar: #161b22;
+    --bg-editor: #0d1117;
+    --bg-titlebar: #161b22;
+    --bg-statusbar: #1f6feb;
+    --bg-activitybar: #161b22;
+    --bg-tab: #1c2128;
+    --bg-tab-active: #0d1117;
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --text-bright: #f0f6fc;
+    --text-link: #58a6ff;
+    --border-color: #30363d;
+    --border-light: #21262d;
+    --accent-blue: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-red: #f85149;
+    --accent-yellow: #d29922;
+    --accent-orange: #db6d28;
+    --accent-purple: #bc8cff;
+    --status-normal: #3fb950;
+    --status-warning: #d29922;
+    --status-exceeded: #f85149;
+    --scrollbar-bg: transparent;
+    --scrollbar-thumb: rgba(139, 148, 158, 0.3);
+    --scrollbar-thumb-hover: rgba(139, 148, 158, 0.5);
+    --shadow-color: rgba(0,0,0,0.5);
+    --card-bg: #161b22;
+    --modal-overlay: rgba(0,0,0,0.5);
+    --login-gradient: linear-gradient(135deg, #0d1117 0%, #161b22 25%, #1a2332 50%, #0d1117 75%, #161b22 100%);
+}
+
+/* --- Monokai --- */
+[data-theme="monokai"] {
+    --bg-primary: #272822;
+    --bg-secondary: #2e2f28;
+    --bg-tertiary: #3e3d32;
+    --bg-hover: #3e3d32;
+    --bg-active: #49483e;
+    --bg-input: #3e3d32;
+    --bg-sidebar: #2e2f28;
+    --bg-editor: #272822;
+    --bg-titlebar: #2e2f28;
+    --bg-statusbar: #75715e;
+    --bg-activitybar: #2e2f28;
+    --bg-tab: #313226;
+    --bg-tab-active: #272822;
+    --text-primary: #f8f8f2;
+    --text-secondary: #a6a899;
+    --text-muted: #75715e;
+    --text-bright: #ffffff;
+    --text-link: #66d9ef;
+    --border-color: #49483e;
+    --border-light: #3e3d32;
+    --accent-blue: #66d9ef;
+    --accent-green: #a6e22e;
+    --accent-red: #f92672;
+    --accent-yellow: #e6db74;
+    --accent-orange: #fd971f;
+    --accent-purple: #ae81ff;
+    --status-normal: #a6e22e;
+    --status-warning: #e6db74;
+    --status-exceeded: #f92672;
+    --scrollbar-bg: transparent;
+    --scrollbar-thumb: rgba(166, 168, 153, 0.3);
+    --scrollbar-thumb-hover: rgba(166, 168, 153, 0.5);
+    --shadow-color: rgba(0,0,0,0.5);
+    --card-bg: #3e3d32;
+    --modal-overlay: rgba(0,0,0,0.5);
+    --login-gradient: linear-gradient(135deg, #272822 0%, #3e3d32 25%, #49483e 50%, #272822 75%, #2e2f28 100%);
+}
+
+/* --- Nord --- */
+[data-theme="nord"] {
+    --bg-primary: #2e3440;
+    --bg-secondary: #3b4252;
+    --bg-tertiary: #434c5e;
+    --bg-hover: #434c5e;
+    --bg-active: #4c566a;
+    --bg-input: #3b4252;
+    --bg-sidebar: #3b4252;
+    --bg-editor: #2e3440;
+    --bg-titlebar: #3b4252;
+    --bg-statusbar: #5e81ac;
+    --bg-activitybar: #3b4252;
+    --bg-tab: #3b4252;
+    --bg-tab-active: #2e3440;
+    --text-primary: #d8dee9;
+    --text-secondary: #9da5b4;
+    --text-muted: #616e88;
+    --text-bright: #eceff4;
+    --text-link: #88c0d0;
+    --border-color: #4c566a;
+    --border-light: #434c5e;
+    --accent-blue: #81a1c1;
+    --accent-green: #a3be8c;
+    --accent-red: #bf616a;
+    --accent-yellow: #ebcb8b;
+    --accent-orange: #d08770;
+    --accent-purple: #b48ead;
+    --status-normal: #a3be8c;
+    --status-warning: #ebcb8b;
+    --status-exceeded: #bf616a;
+    --scrollbar-bg: transparent;
+    --scrollbar-thumb: rgba(136, 192, 208, 0.3);
+    --scrollbar-thumb-hover: rgba(136, 192, 208, 0.5);
+    --shadow-color: rgba(0,0,0,0.4);
+    --card-bg: #3b4252;
+    --modal-overlay: rgba(0,0,0,0.5);
+    --login-gradient: linear-gradient(135deg, #2e3440 0%, #3b4252 25%, #434c5e 50%, #2e3440 75%, #3b4252 100%);
+}
+
+/* --- Sunset --- */
+[data-theme="sunset"] {
+    --bg-primary: #1a1216;
+    --bg-secondary: #241920;
+    --bg-tertiary: #2e2025;
+    --bg-hover: #3a272f;
+    --bg-active: #442e38;
+    --bg-input: #2e2025;
+    --bg-sidebar: #241920;
+    --bg-editor: #1a1216;
+    --bg-titlebar: #241920;
+    --bg-statusbar: #c0392b;
+    --bg-activitybar: #241920;
+    --bg-tab: #2e2025;
+    --bg-tab-active: #1a1216;
+    --text-primary: #e8d5c4;
+    --text-secondary: #b8a090;
+    --text-muted: #7a6660;
+    --text-bright: #fff0e0;
+    --text-link: #e8a87c;
+    --border-color: #442e38;
+    --border-light: #3a272f;
+    --accent-blue: #e8a87c;
+    --accent-green: #6ab04c;
+    --accent-red: #e74c3c;
+    --accent-yellow: #f9ca24;
+    --accent-orange: #e67e22;
+    --accent-purple: #be2edd;
+    --status-normal: #6ab04c;
+    --status-warning: #f9ca24;
+    --status-exceeded: #e74c3c;
+    --scrollbar-bg: transparent;
+    --scrollbar-thumb: rgba(232, 168, 124, 0.3);
+    --scrollbar-thumb-hover: rgba(232, 168, 124, 0.5);
+    --shadow-color: rgba(0,0,0,0.5);
+    --card-bg: #2e2025;
+    --modal-overlay: rgba(0,0,0,0.5);
+    --login-gradient: linear-gradient(135deg, #1a1216 0%, #2c1320 25%, #3d1626 50%, #4a1528 75%, #1a1216 100%);
+}
+
+/* =============================================
+   Theme Picker Styles
+   ============================================= */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.theme-card {
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid var(--border-color);
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.theme-card:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+}
+
+.theme-card.active {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 1px var(--accent-blue);
+}
+
+.theme-preview {
+    width: 100%;
+    height: 60px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.theme-preview-bar {
+    width: 15%;
+}
+
+.theme-preview-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4px;
+    gap: 3px;
+}
+
+.theme-preview-line {
+    height: 4px;
+    border-radius: 2px;
+    opacity: 0.7;
+}
+
+.theme-card-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.theme-card-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}

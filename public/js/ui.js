@@ -87,6 +87,63 @@ const UI = {
                 DataStore.saveSettings(settings);
             });
         }
+
+        // Theme picker delegation
+        document.addEventListener('click', (e) => {
+            const card = e.target.closest('.theme-card');
+            if (card && card.dataset.theme) {
+                this.setTheme(card.dataset.theme);
+            }
+        });
+    },
+
+    setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        const settings = DataStore.getSettings();
+        settings.theme = theme;
+        DataStore.saveSettings(settings);
+        // Update active state
+        document.querySelectorAll('.theme-card').forEach(c => {
+            c.classList.toggle('active', c.dataset.theme === theme);
+        });
+        // Update login gradient
+        const loginScreen = document.getElementById('login-screen');
+        if (loginScreen) {
+            loginScreen.style.background = 'var(--login-gradient)';
+            loginScreen.style.backgroundSize = '400% 400%';
+            loginScreen.style.animation = 'gradientShift 15s ease infinite';
+        }
+        // Re-render charts with new colors
+        if (typeof Dashboard !== 'undefined') Dashboard.refresh();
+    },
+
+    renderThemePicker() {
+        const container = document.getElementById('theme-picker');
+        if (!container) return;
+        const currentTheme = DataStore.getSettings().theme || 'dark';
+        const themes = [
+            { id: 'dark', name: 'Dark', sub: 'VS Code Default', bar: '#333333', bg: '#1e1e1e', c1: '#007acc', c2: '#4ec9b0', c3: '#cca700' },
+            { id: 'light', name: 'Light', sub: 'Clean & Bright', bar: '#e8e8e8', bg: '#ffffff', c1: '#007acc', c2: '#16825d', c3: '#bf8803' },
+            { id: 'high-contrast', name: 'High Contrast', sub: 'Accessibility', bar: '#111111', bg: '#000000', c1: '#6fc3ff', c2: '#73e068', c3: '#ffd700' },
+            { id: 'midnight', name: 'Midnight Blue', sub: 'GitHub Dark', bar: '#161b22', bg: '#0d1117', c1: '#58a6ff', c2: '#3fb950', c3: '#d29922' },
+            { id: 'monokai', name: 'Monokai', sub: 'Classic Editor', bar: '#2e2f28', bg: '#272822', c1: '#66d9ef', c2: '#a6e22e', c3: '#f92672' },
+            { id: 'nord', name: 'Nord', sub: 'Arctic Cool', bar: '#3b4252', bg: '#2e3440', c1: '#81a1c1', c2: '#a3be8c', c3: '#ebcb8b' },
+            { id: 'sunset', name: 'Sunset', sub: 'Warm Tones', bar: '#241920', bg: '#1a1216', c1: '#e8a87c', c2: '#6ab04c', c3: '#e74c3c' }
+        ];
+
+        container.innerHTML = themes.map(t =>
+            '<div class="theme-card ' + (t.id === currentTheme ? 'active' : '') + '" data-theme="' + t.id + '">' +
+            '<div class="theme-preview">' +
+            '<div class="theme-preview-bar" style="background:' + t.bar + '"></div>' +
+            '<div class="theme-preview-content" style="background:' + t.bg + '">' +
+            '<div class="theme-preview-line" style="background:' + t.c1 + '; width:80%"></div>' +
+            '<div class="theme-preview-line" style="background:' + t.c2 + '; width:60%"></div>' +
+            '<div class="theme-preview-line" style="background:' + t.c3 + '; width:40%"></div>' +
+            '</div></div>' +
+            '<div class="theme-card-label">' + t.name + '</div>' +
+            '<div class="theme-card-sub">' + t.sub + '</div>' +
+            '</div>'
+        ).join('');
     },
 
     navigateTo(panel) {
@@ -374,6 +431,9 @@ const UI = {
         if (driverMileageSetting) {
             driverMileageSetting.checked = settings.driverSeeMileage !== false;
         }
+
+        // Render theme picker
+        this.renderThemePicker();
 
         // Navigate to appropriate default panel
         if (Auth.isDriver()) {

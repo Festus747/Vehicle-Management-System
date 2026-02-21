@@ -92,7 +92,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 25%, #0d2137 50%, #0f3460 75%, #1a1a2e 100%);
+    background: var(--login-gradient, linear-gradient(135deg, #0a0e27 0%, #1a1a3e 25%, #0d2137 50%, #0f3460 75%, #1a1a2e 100%));
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     z-index: 10000;

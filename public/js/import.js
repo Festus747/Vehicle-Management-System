@@ -161,6 +161,33 @@ const DataImporter = {
             return;
         }
 
+        // Try server-side import first
+        if (navigator.onLine && ApiClient.getToken()) {
+            try {
+                UI.showToast('info', 'Importing...', 'Processing vehicle data via server...');
+                const result = await ApiClient.importFile('vehicles', this.vehicleFile);
+                if (result && result.success) {
+                    UI.showToast('success', 'Import Complete',
+                        'Imported ' + result.imported + ' vehicles, updated ' + result.updated +
+                        (result.errors.length > 0 ? '. ' + result.errors.length + ' errors.' : ''));
+                    this.showImportResult(result);
+                    // Sync local data with server
+                    await DataStore.syncFromServer();
+                    App.refreshAll();
+                    this.vehicleFile = null;
+                    document.getElementById('vehicle-file-name').classList.add('hidden');
+                    document.getElementById('btn-import-vehicles').disabled = true;
+                    return;
+                } else if (result && result.error) {
+                    UI.showToast('error', 'Import Error', result.error);
+                    return;
+                }
+            } catch (err) {
+                console.warn('[Import] Server import failed, falling back to client-side:', err.message);
+            }
+        }
+
+        // Fallback: client-side import
         try {
             const rows = await this.readFile(this.vehicleFile);
             if (rows.length < 2) {
@@ -243,6 +270,32 @@ const DataImporter = {
             return;
         }
 
+        // Try server-side import first
+        if (navigator.onLine && ApiClient.getToken()) {
+            try {
+                UI.showToast('info', 'Importing...', 'Processing mileage data via server...');
+                const result = await ApiClient.importFile('mileage', this.mileageFile);
+                if (result && result.success) {
+                    UI.showToast('success', 'Import Complete',
+                        'Imported ' + result.imported + ' mileage records' +
+                        (result.errors.length > 0 ? '. ' + result.errors.length + ' errors.' : ''));
+                    this.showImportResult(result);
+                    await DataStore.syncFromServer();
+                    App.refreshAll();
+                    this.mileageFile = null;
+                    document.getElementById('mileage-file-name').classList.add('hidden');
+                    document.getElementById('btn-import-mileage').disabled = true;
+                    return;
+                } else if (result && result.error) {
+                    UI.showToast('error', 'Import Error', result.error);
+                    return;
+                }
+            } catch (err) {
+                console.warn('[Import] Server import failed, falling back to client-side:', err.message);
+            }
+        }
+
+        // Fallback: client-side import
         try {
             const rows = await this.readFile(this.mileageFile);
             if (rows.length < 2) {
