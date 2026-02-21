@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,14 +8,17 @@
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/vehicles.css">
     <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="ghana-gas-logo.png">
 </head>
 <body>
-    <!-- Login Screen -->
     <div id="login-screen" class="login-screen">
         <div class="login-container">
             <div class="login-header">
-                <i class="fas fa-car-side login-icon"></i>
+                <div class="login-logo-wrapper">
+                    <img src="ghana-gas-logo.png" alt="Logo" class="login-logo">
+                </div>
                 <h1>Vehicle Mileage Tracker</h1>
                 <p>Fleet Management System</p>
             </div>
@@ -42,75 +45,75 @@
             </form>
         </div>
     </div>
-
-    <!-- Main Application -->
     <div id="app-container" class="app-container hidden">
-        <!-- Title Bar -->
         <div class="titlebar">
             <div class="titlebar-left">
-                <i class="fas fa-car-side"></i>
-                <span class="titlebar-menu">File</span>
-                <span class="titlebar-menu">View</span>
-                <span class="titlebar-menu">Help</span>
+                <img src="ghana-gas-logo.png" alt="Logo" class="titlebar-logo">
+                <span class="titlebar-app-name">Vehicle Mileage Tracker</span>
             </div>
             <div class="titlebar-center">
-                Vehicle Mileage Tracker
+                <button id="mobile-menu-btn" class="mobile-menu-btn hidden">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
             <div class="titlebar-right">
                 <span id="current-user-display" class="user-badge">
-                    <i class="fas fa-user"></i> <span id="user-name-display">Admin</span>
+                    <i class="fas fa-user-circle"></i> <span id="user-name-display">Admin</span>
+                    <span id="user-role-badge" class="role-badge">ADMIN</span>
                 </span>
                 <button id="logout-btn" class="titlebar-btn" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
         </div>
-
-        <!-- Main Layout -->
+        <div id="mobile-overlay" class="mobile-overlay hidden"></div>
         <div class="main-layout">
-            <!-- Activity Bar (VS Code left icon bar) -->
-            <div class="activity-bar">
+            <div id="activity-bar" class="activity-bar">
                 <div class="activity-icons-top">
                     <button class="activity-btn active" data-panel="dashboard" title="Dashboard">
                         <i class="fas fa-tachometer-alt"></i>
+                        <span class="activity-label">Dashboard</span>
                     </button>
-                    <button class="activity-btn" data-panel="vehicles" title="Vehicles">
+                    <button class="activity-btn admin-only-nav" data-panel="vehicles" title="Vehicles">
                         <i class="fas fa-car"></i>
+                        <span class="activity-label">Vehicles</span>
                     </button>
-                    <button class="activity-btn" data-panel="mileage" title="Mileage Tracking">
+                    <button class="activity-btn" data-panel="mileage" title="Mileage">
                         <i class="fas fa-road"></i>
+                        <span class="activity-label">Mileage</span>
                     </button>
                     <button class="activity-btn" data-panel="alerts" title="Alerts">
                         <i class="fas fa-bell"></i>
                         <span id="alert-badge" class="alert-badge hidden">0</span>
+                        <span class="activity-label">Alerts</span>
                     </button>
-                    <button class="activity-btn" data-panel="reports" title="Reports">
+                    <button class="activity-btn admin-only-nav" data-panel="reports" title="Reports">
                         <i class="fas fa-chart-bar"></i>
+                        <span class="activity-label">Reports</span>
                     </button>
                     <button class="activity-btn driver-only" data-panel="my-vehicle" title="My Vehicle">
                         <i class="fas fa-id-card"></i>
+                        <span class="activity-label">My Vehicle</span>
+                    </button>
+                    <button class="activity-btn admin-only-nav" data-panel="upload" title="Import Data">
+                        <i class="fas fa-file-upload"></i>
+                        <span class="activity-label">Import</span>
                     </button>
                 </div>
                 <div class="activity-icons-bottom">
                     <button class="activity-btn" data-panel="settings" title="Settings">
                         <i class="fas fa-cog"></i>
+                        <span class="activity-label">Settings</span>
                     </button>
                 </div>
             </div>
-
-            <!-- Sidebar -->
-            <div class="sidebar">
+            <div id="sidebar" class="sidebar">
                 <div class="sidebar-header">
                     <span id="sidebar-title">DASHBOARD</span>
                 </div>
-                <div id="sidebar-content" class="sidebar-content">
-                    <!-- Dynamic sidebar content -->
-                </div>
+                <div id="sidebar-content" class="sidebar-content"></div>
             </div>
-
-            <!-- Editor Area -->
             <div class="editor-area">
-                <!-- Tabs -->
                 <div class="tabs-bar">
                     <div id="tabs-container" class="tabs-container">
                         <div class="tab active" data-tab="dashboard">
@@ -119,455 +122,111 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Content Panels -->
                 <div id="content-area" class="content-area">
-                    <!-- Dashboard Panel -->
                     <div id="panel-dashboard" class="panel active">
                         <div class="panel-content dashboard-grid">
-                            <!-- Stats Cards -->
                             <div class="stats-row">
-                                <div class="stat-card">
-                                    <div class="stat-icon total"><i class="fas fa-car"></i></div>
-                                    <div class="stat-info">
-                                        <span class="stat-value" id="stat-total">0</span>
-                                        <span class="stat-label">Total Vehicles</span>
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-icon normal"><i class="fas fa-check-circle"></i></div>
-                                    <div class="stat-info">
-                                        <span class="stat-value" id="stat-normal">0</span>
-                                        <span class="stat-label">Normal</span>
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-icon warning"><i class="fas fa-exclamation-triangle"></i></div>
-                                    <div class="stat-info">
-                                        <span class="stat-value" id="stat-warning">0</span>
-                                        <span class="stat-label">Warning (≤200 mi)</span>
-                                    </div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-icon exceeded"><i class="fas fa-times-circle"></i></div>
-                                    <div class="stat-info">
-                                        <span class="stat-value" id="stat-exceeded">0</span>
-                                        <span class="stat-label">Exceeded (≥5000)</span>
-                                    </div>
-                                </div>
+                                <div class="stat-card"><div class="stat-icon total"><i class="fas fa-car"></i></div><div class="stat-info"><span class="stat-value" id="stat-total">0</span><span class="stat-label">Total Vehicles</span></div></div>
+                                <div class="stat-card"><div class="stat-icon normal"><i class="fas fa-check-circle"></i></div><div class="stat-info"><span class="stat-value" id="stat-normal">0</span><span class="stat-label">Normal</span></div></div>
+                                <div class="stat-card"><div class="stat-icon warning"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-info"><span class="stat-value" id="stat-warning">0</span><span class="stat-label">Warning</span></div></div>
+                                <div class="stat-card"><div class="stat-icon exceeded"><i class="fas fa-times-circle"></i></div><div class="stat-info"><span class="stat-value" id="stat-exceeded">0</span><span class="stat-label">Exceeded</span></div></div>
                             </div>
-
-                            <!-- Charts Row -->
                             <div class="charts-row">
-                                <div class="chart-card">
-                                    <h3>Fleet Mileage Distribution</h3>
-                                    <canvas id="mileage-chart"></canvas>
-                                </div>
-                                <div class="chart-card">
-                                    <h3>Vehicle Status Overview</h3>
-                                    <canvas id="status-chart"></canvas>
-                                </div>
+                                <div class="chart-card"><h3>Fleet Mileage Distribution</h3><canvas id="mileage-chart"></canvas></div>
+                                <div class="chart-card"><h3>Vehicle Status Overview</h3><canvas id="status-chart"></canvas></div>
                             </div>
-
-                            <!-- Recent Activity -->
-                            <div class="recent-activity">
-                                <h3><i class="fas fa-clock"></i> Recent Activity</h3>
-                                <div id="recent-activity-list" class="activity-list">
-                                    <div class="activity-empty">No recent activity</div>
-                                </div>
-                            </div>
-
-                            <!-- Vehicle Quick View -->
-                            <div class="vehicle-quickview">
-                                <h3><i class="fas fa-car"></i> Vehicle Fleet Overview</h3>
-                                <div id="fleet-overview-table" class="fleet-table-container">
-                                    <table class="fleet-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Vehicle ID</th>
-                                                <th>Registration</th>
-                                                <th>Type</th>
-                                                <th>Driver</th>
-                                                <th>Mileage</th>
-                                                <th>Remaining</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="fleet-overview-body">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                            <div class="recent-activity"><h3><i class="fas fa-clock"></i> Recent Activity</h3><div id="recent-activity-list" class="activity-list"><div class="activity-empty">No recent activity</div></div></div>
+                            <div class="vehicle-quickview admin-only"><h3><i class="fas fa-car"></i> Vehicle Fleet Overview</h3><div id="fleet-overview-table" class="fleet-table-container"><table class="fleet-table"><thead><tr><th>Vehicle ID</th><th>Registration</th><th>Type</th><th>Driver</th><th>Mileage</th><th>Remaining</th><th>Status</th></tr></thead><tbody id="fleet-overview-body"></tbody></table></div></div>
+                            <div id="driver-dashboard-vehicle" class="driver-only" style="display:none;"><h3><i class="fas fa-car"></i> My Assigned Vehicle</h3><div id="driver-dashboard-vehicle-content"></div></div>
                         </div>
                     </div>
-
-                    <!-- Vehicles Panel -->
                     <div id="panel-vehicles" class="panel">
                         <div class="panel-content">
-                            <div class="panel-toolbar">
-                                <h2><i class="fas fa-car"></i> Vehicle Management</h2>
-                                <div class="toolbar-actions admin-only">
-                                    <button id="btn-add-vehicle" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i> Register Vehicle
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="search-bar">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="vehicle-search" placeholder="Search vehicles...">
-                            </div>
-                            <div id="vehicles-table-container" class="table-container">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Vehicle ID</th>
-                                            <th>Registration</th>
-                                            <th>Type</th>
-                                            <th>Driver</th>
-                                            <th>Current Mileage</th>
-                                            <th>Remaining</th>
-                                            <th>Status</th>
-                                            <th class="admin-only">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="vehicles-table-body">
-                                    </tbody>
-                                </table>
-                            </div>
+                            <div class="panel-toolbar"><h2><i class="fas fa-car"></i> Vehicle Management</h2><div class="toolbar-actions admin-only"><button id="btn-add-vehicle" class="btn btn-primary"><i class="fas fa-plus"></i> Register Vehicle</button></div></div>
+                            <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="vehicle-search" placeholder="Search vehicles..."></div>
+                            <div id="vehicles-table-container" class="table-container"><table class="data-table"><thead><tr><th>Vehicle ID</th><th>Registration</th><th>Type</th><th>Driver</th><th>Current Mileage</th><th>Remaining</th><th>Status</th><th class="admin-only">Actions</th></tr></thead><tbody id="vehicles-table-body"></tbody></table></div>
                         </div>
                     </div>
-
-                    <!-- Mileage Panel -->
                     <div id="panel-mileage" class="panel">
                         <div class="panel-content">
-                            <div class="panel-toolbar">
-                                <h2><i class="fas fa-road"></i> Mileage Tracking</h2>
-                                <div class="toolbar-actions">
-                                    <button id="btn-add-mileage" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i> Log Mileage
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mileage-filters">
-                                <select id="mileage-vehicle-filter">
-                                    <option value="">All Vehicles</option>
-                                </select>
-                                <input type="date" id="mileage-date-from" placeholder="From">
-                                <input type="date" id="mileage-date-to" placeholder="To">
-                                <button id="btn-filter-mileage" class="btn btn-secondary">
-                                    <i class="fas fa-filter"></i> Filter
-                                </button>
-                            </div>
-                            <div id="mileage-table-container" class="table-container">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date/Time</th>
-                                            <th>Vehicle ID</th>
-                                            <th>Registration</th>
-                                            <th>Previous Mileage</th>
-                                            <th>New Mileage</th>
-                                            <th>Miles Added</th>
-                                            <th>Logged By</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="mileage-table-body">
-                                    </tbody>
-                                </table>
-                            </div>
+                            <div class="panel-toolbar"><h2><i class="fas fa-road"></i> Mileage Tracking</h2><div class="toolbar-actions"><button id="btn-add-mileage" class="btn btn-primary"><i class="fas fa-plus"></i> Log Mileage</button></div></div>
+                            <div class="mileage-filters"><select id="mileage-vehicle-filter"><option value="">All Vehicles</option></select><input type="date" id="mileage-date-from"><input type="date" id="mileage-date-to"><button id="btn-filter-mileage" class="btn btn-secondary"><i class="fas fa-filter"></i> Filter</button></div>
+                            <div id="mileage-table-container" class="table-container"><table class="data-table"><thead><tr><th>Date/Time</th><th>Vehicle ID</th><th>Registration</th><th>Previous</th><th>New</th><th>Added</th><th>Logged By</th></tr></thead><tbody id="mileage-table-body"></tbody></table></div>
                         </div>
                     </div>
-
-                    <!-- Alerts Panel -->
                     <div id="panel-alerts" class="panel">
                         <div class="panel-content">
-                            <div class="panel-toolbar">
-                                <h2><i class="fas fa-bell"></i> Alerts & Notifications</h2>
-                                <div class="toolbar-actions">
-                                    <button id="btn-clear-alerts" class="btn btn-secondary">
-                                        <i class="fas fa-check-double"></i> Mark All Read
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="alerts-filters">
-                                <button class="alert-filter-btn active" data-filter="all">All</button>
-                                <button class="alert-filter-btn" data-filter="warning">Warning</button>
-                                <button class="alert-filter-btn" data-filter="critical">Critical</button>
-                                <button class="alert-filter-btn" data-filter="unread">Unread</button>
-                            </div>
-                            <div id="alerts-list" class="alerts-list">
-                                <div class="alert-empty">No alerts</div>
-                            </div>
+                            <div class="panel-toolbar"><h2><i class="fas fa-bell"></i> Alerts & Notifications</h2><div class="toolbar-actions"><button id="btn-clear-alerts" class="btn btn-secondary"><i class="fas fa-check-double"></i> Mark All Read</button></div></div>
+                            <div class="alerts-filters"><button class="alert-filter-btn active" data-filter="all">All</button><button class="alert-filter-btn" data-filter="warning">Warning</button><button class="alert-filter-btn" data-filter="critical">Critical</button><button class="alert-filter-btn" data-filter="unread">Unread</button></div>
+                            <div id="alerts-list" class="alerts-list"><div class="alert-empty">No alerts</div></div>
                         </div>
                     </div>
-
-                    <!-- Reports Panel -->
                     <div id="panel-reports" class="panel">
                         <div class="panel-content">
-                            <div class="panel-toolbar">
-                                <h2><i class="fas fa-chart-bar"></i> Reports</h2>
-                            </div>
+                            <div class="panel-toolbar"><h2><i class="fas fa-chart-bar"></i> Reports</h2></div>
                             <div class="reports-grid">
-                                <div class="report-card" data-report="mileage-history">
-                                    <div class="report-icon"><i class="fas fa-history"></i></div>
-                                    <h3>Vehicle Mileage History</h3>
-                                    <p>Complete mileage log for all vehicles</p>
-                                    <div class="report-actions">
-                                        <button class="btn btn-primary btn-sm" onclick="Reports.download('mileage-history', 'csv')">
-                                            <i class="fas fa-file-csv"></i> CSV
-                                        </button>
-                                        <button class="btn btn-secondary btn-sm" onclick="Reports.download('mileage-history', 'pdf')">
-                                            <i class="fas fa-file-pdf"></i> PDF
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="report-card" data-report="alert-logs">
-                                    <div class="report-icon"><i class="fas fa-bell"></i></div>
-                                    <h3>Alert Logs</h3>
-                                    <p>History of all system alerts</p>
-                                    <div class="report-actions">
-                                        <button class="btn btn-primary btn-sm" onclick="Reports.download('alert-logs', 'csv')">
-                                            <i class="fas fa-file-csv"></i> CSV
-                                        </button>
-                                        <button class="btn btn-secondary btn-sm" onclick="Reports.download('alert-logs', 'pdf')">
-                                            <i class="fas fa-file-pdf"></i> PDF
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="report-card" data-report="driver-usage">
-                                    <div class="report-icon"><i class="fas fa-users"></i></div>
-                                    <h3>Driver Usage Report</h3>
-                                    <p>Mileage by driver with vehicle assignments</p>
-                                    <div class="report-actions">
-                                        <button class="btn btn-primary btn-sm" onclick="Reports.download('driver-usage', 'csv')">
-                                            <i class="fas fa-file-csv"></i> CSV
-                                        </button>
-                                        <button class="btn btn-secondary btn-sm" onclick="Reports.download('driver-usage', 'pdf')">
-                                            <i class="fas fa-file-pdf"></i> PDF
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="report-card" data-report="fleet-summary">
-                                    <div class="report-icon"><i class="fas fa-car"></i></div>
-                                    <h3>Fleet Summary</h3>
-                                    <p>Current status of all vehicles</p>
-                                    <div class="report-actions">
-                                        <button class="btn btn-primary btn-sm" onclick="Reports.download('fleet-summary', 'csv')">
-                                            <i class="fas fa-file-csv"></i> CSV
-                                        </button>
-                                        <button class="btn btn-secondary btn-sm" onclick="Reports.download('fleet-summary', 'pdf')">
-                                            <i class="fas fa-file-pdf"></i> PDF
-                                        </button>
-                                    </div>
-                                </div>
+                                <div class="report-card"><div class="report-icon"><i class="fas fa-history"></i></div><h3>Vehicle Mileage History</h3><p>Complete mileage log for all vehicles</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('mileage-history','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('mileage-history','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+                                <div class="report-card"><div class="report-icon"><i class="fas fa-bell"></i></div><h3>Alert Logs</h3><p>History of all system alerts</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('alert-logs','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('alert-logs','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+                                <div class="report-card"><div class="report-icon"><i class="fas fa-users"></i></div><h3>Driver Usage Report</h3><p>Mileage by driver with vehicle assignments</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('driver-usage','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('driver-usage','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+                                <div class="report-card"><div class="report-icon"><i class="fas fa-car"></i></div><h3>Fleet Summary</h3><p>Current status of all vehicles</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('fleet-summary','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('fleet-summary','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- My Vehicle Panel (Driver) -->
                     <div id="panel-my-vehicle" class="panel">
                         <div class="panel-content">
-                            <div class="panel-toolbar">
-                                <h2><i class="fas fa-id-card"></i> My Vehicle</h2>
-                            </div>
-                            <div id="my-vehicle-content" class="my-vehicle-content">
-                                <div class="no-vehicle-assigned">
-                                    <i class="fas fa-car-side"></i>
-                                    <p>No vehicle currently assigned to you.</p>
+                            <div class="panel-toolbar"><h2><i class="fas fa-id-card"></i> My Vehicle</h2></div>
+                            <div id="my-vehicle-content" class="my-vehicle-content"><div class="no-vehicle-assigned"><i class="fas fa-car-side"></i><p>No vehicle currently assigned to you.</p></div></div>
+                        </div>
+                    </div>
+                    <div id="panel-upload" class="panel">
+                        <div class="panel-content">
+                            <div class="panel-toolbar"><h2><i class="fas fa-file-upload"></i> Import Historical Data</h2></div>
+                            <div class="upload-section">
+                                <div class="upload-info"><i class="fas fa-info-circle"></i><p>Upload a CSV or Excel (.xlsx) file containing vehicle and mileage data collected before this application was available.</p></div>
+                                <div class="upload-cards">
+                                    <div class="upload-card">
+                                        <div class="upload-card-header"><i class="fas fa-car"></i><h4>Import Vehicles</h4></div>
+                                        <p>Columns: <strong>Vehicle ID, Registration, Type, Driver, Mileage, Status</strong></p>
+                                        <div class="upload-format-hint"><span class="format-tag">CSV</span><span class="format-tag">XLSX</span></div>
+                                        <div class="upload-dropzone" id="vehicle-dropzone"><i class="fas fa-cloud-upload-alt"></i><p>Drag & drop or click to browse</p><input type="file" id="vehicle-file-input" accept=".csv,.xlsx,.xls" class="file-input-hidden"></div>
+                                        <div id="vehicle-file-name" class="file-name-display hidden"></div>
+                                        <div class="upload-card-actions"><button class="btn btn-primary" id="btn-import-vehicles" disabled><i class="fas fa-upload"></i> Import Vehicles</button><button class="btn btn-secondary btn-sm" onclick="DataImporter.downloadTemplate('vehicles')"><i class="fas fa-download"></i> Template</button></div>
+                                    </div>
+                                    <div class="upload-card">
+                                        <div class="upload-card-header"><i class="fas fa-road"></i><h4>Import Mileage Logs</h4></div>
+                                        <p>Columns: <strong>Vehicle ID, Date, Previous Mileage, New Mileage, Logged By, Notes</strong></p>
+                                        <div class="upload-format-hint"><span class="format-tag">CSV</span><span class="format-tag">XLSX</span></div>
+                                        <div class="upload-dropzone" id="mileage-dropzone"><i class="fas fa-cloud-upload-alt"></i><p>Drag & drop or click to browse</p><input type="file" id="mileage-file-input" accept=".csv,.xlsx,.xls" class="file-input-hidden"></div>
+                                        <div id="mileage-file-name" class="file-name-display hidden"></div>
+                                        <div class="upload-card-actions"><button class="btn btn-primary" id="btn-import-mileage" disabled><i class="fas fa-upload"></i> Import Mileage</button><button class="btn btn-secondary btn-sm" onclick="DataImporter.downloadTemplate('mileage')"><i class="fas fa-download"></i> Template</button></div>
+                                    </div>
                                 </div>
+                                <div id="import-preview" class="import-preview hidden"><h4><i class="fas fa-eye"></i> Import Preview</h4><div id="import-preview-content"></div></div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Settings Panel -->
                     <div id="panel-settings" class="panel">
                         <div class="panel-content">
-                            <div class="panel-toolbar">
-                                <h2><i class="fas fa-cog"></i> Settings</h2>
-                            </div>
+                            <div class="panel-toolbar"><h2><i class="fas fa-cog"></i> Settings</h2></div>
                             <div class="settings-content">
-                                <div class="settings-section">
-                                    <h3>Notification Settings</h3>
-                                    <div class="setting-item">
-                                        <label>
-                                            <input type="checkbox" id="setting-email-alerts" checked>
-                                            Email Notifications
-                                        </label>
-                                        <p class="setting-desc">Receive email alerts for mileage warnings</p>
-                                    </div>
-                                    <div class="setting-item">
-                                        <label>
-                                            <input type="checkbox" id="setting-push-alerts">
-                                            Push Notifications
-                                        </label>
-                                        <p class="setting-desc">Receive browser push notifications</p>
-                                    </div>
-                                    <div class="setting-item">
-                                        <label>Warning Threshold (miles remaining)</label>
-                                        <input type="number" id="setting-warning-threshold" value="200" min="50" max="1000" class="setting-input">
-                                        <p class="setting-desc">Alert when remaining mileage falls below this value</p>
-                                    </div>
-                                    <div class="setting-item">
-                                        <label>Maximum Mileage Limit</label>
-                                        <input type="number" id="setting-max-mileage" value="5000" min="1000" max="100000" class="setting-input">
-                                        <p class="setting-desc">Maximum mileage allowed per vehicle</p>
-                                    </div>
-                                </div>
-                                <div class="settings-section">
-                                    <h3>Application</h3>
-                                    <div class="setting-item">
-                                        <label>Theme</label>
-                                        <select id="setting-theme" class="setting-input">
-                                            <option value="dark">Dark (Default)</option>
-                                            <option value="light">Light</option>
-                                        </select>
-                                    </div>
-                                    <div class="setting-item">
-                                        <button id="btn-reset-data" class="btn btn-danger">
-                                            <i class="fas fa-trash"></i> Reset All Data
-                                        </button>
-                                        <p class="setting-desc">Clear all application data (cannot be undone)</p>
-                                    </div>
-                                    <div class="setting-item">
-                                        <button id="btn-load-sample" class="btn btn-secondary">
-                                            <i class="fas fa-database"></i> Load Sample Data
-                                        </button>
-                                        <p class="setting-desc">Load sample vehicles and mileage data for testing</p>
-                                    </div>
-                                </div>
+                                <div class="settings-section"><h3>My Notification Preferences</h3><div class="setting-item"><label><input type="checkbox" id="setting-email-alerts" checked> Email Notifications</label><p class="setting-desc">Receive email alerts for mileage warnings</p></div><div class="setting-item"><label><input type="checkbox" id="setting-push-alerts"> Push Notifications</label><p class="setting-desc">Receive browser push notifications</p></div></div>
+                                <div class="settings-section admin-only"><h3>Mileage Policy</h3><div class="setting-item"><label>Warning Threshold (miles remaining)</label><input type="number" id="setting-warning-threshold" value="200" min="50" max="1000" class="setting-input"><p class="setting-desc">Alert when remaining mileage falls below this value</p></div><div class="setting-item"><label>Maximum Mileage Limit</label><input type="number" id="setting-max-mileage" value="5000" min="1000" max="100000" class="setting-input"><p class="setting-desc">Maximum mileage allowed per vehicle</p></div></div>
+                                <div class="settings-section admin-only"><h3>Driver Visibility</h3><div class="setting-item"><label><input type="checkbox" id="setting-driver-see-mileage" checked> Drivers can see Mileage Log page</label><p class="setting-desc">Allow drivers to view the mileage tracking page (filtered to their vehicles)</p></div></div>
+                                <div class="settings-section admin-only"><h3>Application</h3><div class="setting-item"><label>Theme</label><select id="setting-theme" class="setting-input"><option value="dark">Dark (Default)</option><option value="light">Light</option></select></div><div class="setting-item"><button id="btn-reset-data" class="btn btn-danger"><i class="fas fa-trash"></i> Reset All Data</button><p class="setting-desc">Clear all application data (cannot be undone)</p></div><div class="setting-item"><button id="btn-load-sample" class="btn btn-secondary"><i class="fas fa-database"></i> Load Sample Data</button><p class="setting-desc">Load sample vehicles and mileage data for testing</p></div></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Status Bar -->
-        <div class="statusbar">
-            <div class="statusbar-left">
-                <span id="status-role"><i class="fas fa-user"></i> Admin</span>
-                <span id="status-vehicles"><i class="fas fa-car"></i> 0 Vehicles</span>
-            </div>
-            <div class="statusbar-right">
-                <span id="status-alerts"><i class="fas fa-bell"></i> 0 Alerts</span>
-                <span id="status-time"><i class="fas fa-clock"></i> --:--</span>
-            </div>
-        </div>
+        <div class="statusbar"><div class="statusbar-left"><span id="status-role"><i class="fas fa-user"></i> Admin</span><span id="status-vehicles"><i class="fas fa-car"></i> 0 Vehicles</span></div><div class="statusbar-right"><span id="status-alerts"><i class="fas fa-bell"></i> 0 Alerts</span><span id="status-time"><i class="fas fa-clock"></i> --:--</span></div></div>
     </div>
-
-    <!-- Modal: Add/Edit Vehicle -->
-    <div id="modal-vehicle" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 id="modal-vehicle-title">Register Vehicle</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <form id="vehicle-form" class="modal-body">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="v-id">Vehicle ID *</label>
-                        <input type="text" id="v-id" required placeholder="e.g., VH-001">
-                    </div>
-                    <div class="form-group">
-                        <label for="v-reg">Registration Number *</label>
-                        <input type="text" id="v-reg" required placeholder="e.g., ABC 1234">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="v-type">Vehicle Type *</label>
-                        <select id="v-type" required>
-                            <option value="">Select type</option>
-                            <option value="Sedan">Sedan</option>
-                            <option value="SUV">SUV</option>
-                            <option value="Truck">Truck</option>
-                            <option value="Van">Van</option>
-                            <option value="Bus">Bus</option>
-                            <option value="Motorcycle">Motorcycle</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="v-driver">Assigned Driver</label>
-                        <input type="text" id="v-driver" placeholder="Driver name">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="v-mileage">Current Mileage (miles)</label>
-                        <input type="number" id="v-mileage" value="0" min="0" max="99999">
-                    </div>
-                    <div class="form-group">
-                        <label for="v-status">Status</label>
-                        <select id="v-status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Vehicle</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Log Mileage -->
-    <div id="modal-mileage" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3>Log Mileage Entry</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <form id="mileage-form" class="modal-body">
-                <div class="form-group">
-                    <label for="m-vehicle">Vehicle *</label>
-                    <select id="m-vehicle" required>
-                        <option value="">Select vehicle</option>
-                    </select>
-                </div>
-                <div class="form-group" id="m-current-display">
-                    <label>Current Mileage</label>
-                    <div class="current-mileage-display">
-                        <span id="m-current-value">--</span> miles
-                        <span class="mileage-remaining" id="m-remaining">-- remaining</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="m-new-mileage">New Mileage Reading (miles) *</label>
-                    <input type="number" id="m-new-mileage" required min="0" max="99999" placeholder="Enter new odometer reading">
-                </div>
-                <div class="form-group">
-                    <label for="m-notes">Notes</label>
-                    <textarea id="m-notes" placeholder="Optional notes about this entry"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Log Mileage</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Vehicle Details -->
-    <div id="modal-vehicle-details" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-container modal-lg">
-            <div class="modal-header">
-                <h3>Vehicle Details</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div id="vehicle-details-content" class="modal-body">
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification Container -->
+    <div id="modal-vehicle" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3 id="modal-vehicle-title">Register Vehicle</h3><button class="modal-close">&times;</button></div><form id="vehicle-form" class="modal-body"><div class="form-row"><div class="form-group"><label for="v-id">Vehicle ID *</label><input type="text" id="v-id" required placeholder="e.g., VH-001"></div><div class="form-group"><label for="v-reg">Registration Number *</label><input type="text" id="v-reg" required placeholder="e.g., ABC 1234"></div></div><div class="form-row"><div class="form-group"><label for="v-type">Vehicle Type *</label><select id="v-type" required><option value="">Select type</option><option value="Sedan">Sedan</option><option value="SUV">SUV</option><option value="Truck">Truck</option><option value="Van">Van</option><option value="Bus">Bus</option><option value="Motorcycle">Motorcycle</option></select></div><div class="form-group"><label for="v-driver">Assigned Driver</label><input type="text" id="v-driver" placeholder="Driver name"></div></div><div class="form-row"><div class="form-group"><label for="v-mileage">Current Mileage (miles)</label><input type="number" id="v-mileage" value="0" min="0" max="99999"></div><div class="form-group"><label for="v-status">Status</label><select id="v-status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Save Vehicle</button></div></form></div></div>
+    <div id="modal-mileage" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3>Log Mileage Entry</h3><button class="modal-close">&times;</button></div><form id="mileage-form" class="modal-body"><div class="form-group"><label for="m-vehicle">Vehicle *</label><select id="m-vehicle" required><option value="">Select vehicle</option></select></div><div class="form-group" id="m-current-display"><label>Current Mileage</label><div class="current-mileage-display"><span id="m-current-value">--</span> miles <span class="mileage-remaining" id="m-remaining">-- remaining</span></div></div><div class="form-group"><label for="m-new-mileage">New Mileage Reading (miles) *</label><input type="number" id="m-new-mileage" required min="0" max="99999" placeholder="Enter new odometer reading"></div><div class="form-group"><label for="m-notes">Notes</label><textarea id="m-notes" placeholder="Optional notes about this entry"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Log Mileage</button></div></form></div></div>
+    <div id="modal-vehicle-details" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container modal-lg"><div class="modal-header"><h3>Vehicle Details</h3><button class="modal-close">&times;</button></div><div id="vehicle-details-content" class="modal-body"></div></div></div>
     <div id="toast-container" class="toast-container"></div>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="js/data.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/vehicles.js"></script>
@@ -575,6 +234,7 @@
     <script src="js/alerts.js"></script>
     <script src="js/reports.js"></script>
     <script src="js/dashboard.js"></script>
+    <script src="js/import.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/app.js"></script>
 </body>

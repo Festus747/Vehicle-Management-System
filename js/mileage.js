@@ -146,8 +146,14 @@ const MileageManager = {
 
     populateVehicleFilter() {
         const select = document.getElementById('mileage-vehicle-filter');
-        const vehicles = DataStore.getVehicles();
+        let vehicles = DataStore.getVehicles();
         const currentVal = select.value;
+
+        // Filter for driver's vehicles only
+        if (Auth.isDriver()) {
+            const user = Auth.getCurrentUser();
+            vehicles = vehicles.filter(v => v.driver === user.name);
+        }
 
         select.innerHTML = '<option value="">All Vehicles</option>' +
             vehicles.map(v => `<option value="${v.id}">${v.id} - ${v.registration}</option>`).join('');
@@ -162,6 +168,15 @@ const MileageManager = {
         const dateTo = document.getElementById('mileage-date-to').value;
 
         let logs = DataStore.getMileageLogs(vehicleFilter || null);
+
+        // Filter for driver's vehicles only
+        if (Auth.isDriver()) {
+            const user = Auth.getCurrentUser();
+            const driverVehicleIds = DataStore.getVehicles()
+                .filter(v => v.driver === user.name)
+                .map(v => v.id);
+            logs = logs.filter(l => driverVehicleIds.includes(l.vehicleId));
+        }
 
         // Apply date filters
         if (dateFrom) {

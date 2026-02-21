@@ -12,6 +12,7 @@ const App = {
         VehicleManager.init();
         MileageManager.init();
         AlertsManager.init();
+        DataImporter.init();
 
         // Check for existing session
         if (Auth.init()) {

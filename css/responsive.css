@@ -1,0 +1,520 @@
+/* =============================================
+   Responsive CSS - Mobile & Tablet
+   ============================================= */
+
+/* Activity bar labels (hidden on desktop, shown on mobile bottom nav) */
+.activity-label {
+    display: none;
+}
+
+/* Mobile menu button (hidden on desktop) */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.mobile-menu-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-bright);
+}
+
+/* Mobile overlay */
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.mobile-overlay.active {
+    display: block;
+}
+
+/* Role badge */
+.role-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--accent-blue);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Logo styles */
+.login-logo-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0,122,204,0.2), rgba(78,201,176,0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,122,204,0.3);
+}
+
+.login-logo {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+}
+
+.titlebar-logo {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.titlebar-app-name {
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Upload section styles */
+.upload-section {
+    max-width: 900px;
+}
+
+.upload-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(0,122,204,0.1);
+    border: 1px solid rgba(0,122,204,0.3);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.upload-info i {
+    color: var(--accent-blue);
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.upload-info p {
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.upload-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.upload-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.upload-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.upload-card-header i {
+    color: var(--accent-blue);
+    font-size: 20px;
+}
+
+.upload-card-header h4 {
+    color: var(--text-bright);
+    font-size: 15px;
+}
+
+.upload-card p {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.upload-format-hint {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.format-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: var(--bg-active);
+    color: var(--accent-green);
+    text-transform: uppercase;
+}
+
+.upload-dropzone {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dragover {
+    border-color: var(--accent-blue);
+    background: rgba(0,122,204,0.05);
+}
+
+.upload-dropzone i {
+    font-size: 28px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.upload-dropzone p {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin: 0;
+}
+
+.file-input-hidden {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-name-display {
+    font-size: 12px;
+    color: var(--accent-green);
+    padding: 6px;
+    margin-bottom: 8px;
+}
+
+.upload-card-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.import-preview {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.import-preview h4 {
+    color: var(--text-bright);
+    font-size: 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.import-preview h4 i {
+    color: var(--accent-blue);
+}
+
+/* =============================================
+   Tablet (max 1024px)
+   ============================================= */
+@media (max-width: 1024px) {
+    .upload-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .vehicle-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =============================================
+   Mobile (max 768px)
+   ============================================= */
+@media (max-width: 768px) {
+    /* Show mobile menu button */
+    .mobile-menu-btn {
+        display: flex !important;
+    }
+
+    /* Hide sidebar by default on mobile */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 30px;
+        bottom: 22px;
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 260px;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    /* Activity bar becomes bottom nav */
+    .activity-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        width: 100%;
+        flex-direction: row;
+        border-right: none;
+        border-top: 1px solid var(--border-color);
+        z-index: 1001;
+        padding: 0;
+        background: var(--bg-activitybar);
+    }
+
+    .activity-icons-top {
+        flex-direction: row;
+        flex: 1;
+        justify-content: space-around;
+        overflow-x: auto;
+    }
+
+    .activity-icons-bottom {
+        display: none;
+    }
+
+    .activity-btn {
+        width: auto;
+        height: auto;
+        min-width: 48px;
+        padding: 6px 4px;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 16px;
+        border-left: none !important;
+        border-top: 2px solid transparent;
+    }
+
+    .activity-btn.active {
+        border-left-color: transparent !important;
+        border-top-color: var(--accent-blue);
+    }
+
+    .activity-label {
+        display: block;
+        font-size: 9px;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .activity-btn.active .activity-label {
+        color: var(--text-bright);
+    }
+
+    /* Main layout adjustments */
+    .main-layout {
+        padding-bottom: 56px;
+    }
+
+    /* Editor area takes full width */
+    .editor-area {
+        min-width: 0;
+    }
+
+    /* Hide tabs bar on very small screens */
+    .tabs-bar {
+        display: none;
+    }
+
+    /* Panel content padding */
+    .panel-content {
+        padding: 12px;
+    }
+
+    /* Stats row */
+    .stats-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* Charts */
+    .charts-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Reports grid */
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Form rows */
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Mileage filters wrap */
+    .mileage-filters {
+        flex-direction: column;
+    }
+
+    /* Tables scroll horizontally */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Titlebar adjustments */
+    .titlebar {
+        height: 44px;
+        padding: 0 8px;
+    }
+
+    .titlebar-app-name {
+        font-size: 13px;
+    }
+
+    .titlebar-center {
+        position: static;
+        transform: none;
+    }
+
+    .user-badge {
+        font-size: 11px;
+    }
+
+    #user-name-display {
+        display: none;
+    }
+
+    /* Status bar */
+    .statusbar {
+        display: none;
+    }
+
+    /* Panel toolbar */
+    .panel-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .panel-toolbar h2 {
+        font-size: 16px;
+    }
+
+    /* Alert filters wrap */
+    .alerts-filters {
+        flex-wrap: wrap;
+    }
+
+    /* Modal responsive */
+    .modal-container {
+        width: 95vw;
+        max-height: 90vh;
+    }
+
+    .modal-container.modal-lg {
+        width: 95vw;
+    }
+
+    /* Vehicle detail grid */
+    .vehicle-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vehicle-info-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* Upload cards */
+    .upload-cards {
+        grid-template-columns: 1fr;
+    }
+
+    /* Search bar */
+    .search-bar {
+        margin-bottom: 12px;
+    }
+
+    /* Stat card */
+    .stat-card {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .stat-value {
+        font-size: 22px;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    /* Toast on mobile */
+    .toast-container {
+        left: 8px;
+        right: 8px;
+        bottom: 64px;
+    }
+
+    .toast {
+        min-width: auto;
+        max-width: 100%;
+    }
+
+    /* Login screen responsive */
+    .login-container {
+        width: 90vw;
+        max-width: 400px;
+        padding: 24px;
+    }
+}
+
+/* =============================================
+   Small mobile (max 480px)
+   ============================================= */
+@media (max-width: 480px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .vehicle-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+    }
+
+    .panel-content {
+        padding: 8px;
+    }
+
+    .action-btn-group {
+        flex-wrap: wrap;
+    }
+
+    .titlebar-logo {
+        width: 24px;
+        height: 24px;
+    }
+}

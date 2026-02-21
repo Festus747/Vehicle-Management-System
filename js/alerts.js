@@ -29,6 +29,18 @@ const AlertsManager = {
         });
     },
 
+    // Get alerts filtered for the current driver (only their assigned vehicles)
+    getDriverAlerts() {
+        const user = Auth.getCurrentUser();
+        if (!user) return [];
+        const allAlerts = DataStore.getAlerts();
+        // Get vehicles assigned to this driver
+        const driverVehicles = DataStore.getVehicles()
+            .filter(v => v.driver === user.name)
+            .map(v => v.id);
+        return allAlerts.filter(a => driverVehicles.includes(a.vehicleId));
+    },
+
     createAlert(vehicleId, type, title, message) {
         const alert = {
             id: 'ALT-' + Date.now(),
@@ -61,7 +73,14 @@ const AlertsManager = {
 
     render() {
         const container = document.getElementById('alerts-list');
-        let alerts = DataStore.getAlerts();
+
+        // Drivers only see alerts for their assigned vehicles
+        let alerts;
+        if (Auth.isDriver()) {
+            alerts = this.getDriverAlerts();
+        } else {
+            alerts = DataStore.getAlerts();
+        }
 
         // Apply filter
         switch (this.currentFilter) {

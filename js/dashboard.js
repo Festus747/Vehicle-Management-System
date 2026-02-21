@@ -19,10 +19,23 @@ const Dashboard = {
 
     updateStats() {
         const stats = DataStore.getStats();
-        document.getElementById('stat-total').textContent = stats.total;
-        document.getElementById('stat-normal').textContent = stats.normal;
-        document.getElementById('stat-warning').textContent = stats.warning;
-        document.getElementById('stat-exceeded').textContent = stats.exceeded;
+        if (Auth.isDriver()) {
+            // Show only driver's vehicle stats
+            const user = Auth.getCurrentUser();
+            const vehicles = DataStore.getVehicles().filter(v => v.driver === user.name && v.status === 'active');
+            const normal = vehicles.filter(v => DataStore.getVehicleStatus(v) === 'normal').length;
+            const warning = vehicles.filter(v => DataStore.getVehicleStatus(v) === 'warning').length;
+            const exceeded = vehicles.filter(v => DataStore.getVehicleStatus(v) === 'exceeded').length;
+            document.getElementById('stat-total').textContent = vehicles.length;
+            document.getElementById('stat-normal').textContent = normal;
+            document.getElementById('stat-warning').textContent = warning;
+            document.getElementById('stat-exceeded').textContent = exceeded;
+        } else {
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-normal').textContent = stats.normal;
+            document.getElementById('stat-warning').textContent = stats.warning;
+            document.getElementById('stat-exceeded').textContent = stats.exceeded;
+        }
     },
 
     updateCharts() {
@@ -33,9 +46,15 @@ const Dashboard = {
     renderMileageChart() {
         const canvas = document.getElementById('mileage-chart');
         const ctx = canvas.getContext('2d');
-        const vehicles = DataStore.getVehicles().filter(v => v.status === 'active');
+        let vehicles = DataStore.getVehicles().filter(v => v.status === 'active');
         const settings = DataStore.getSettings();
         const maxMileage = settings.maxMileage || MAX_MILEAGE;
+
+        // Filter for driver's vehicles only
+        if (Auth.isDriver()) {
+            const user = Auth.getCurrentUser();
+            vehicles = vehicles.filter(v => v.driver === user.name);
+        }
 
         if (this.mileageChart) this.mileageChart.destroy();
 
@@ -96,7 +115,19 @@ const Dashboard = {
     renderStatusChart() {
         const canvas = document.getElementById('status-chart');
         const ctx = canvas.getContext('2d');
-        const stats = DataStore.getStats();
+        let stats;
+
+        if (Auth.isDriver()) {
+            const user = Auth.getCurrentUser();
+            const vehicles = DataStore.getVehicles().filter(v => v.driver === user.name && v.status === 'active');
+            stats = {
+                normal: vehicles.filter(v => DataStore.getVehicleStatus(v) === 'normal').length,
+                warning: vehicles.filter(v => DataStore.getVehicleStatus(v) === 'warning').length,
+                exceeded: vehicles.filter(v => DataStore.getVehicleStatus(v) === 'exceeded').length
+            };
+        } else {
+            stats = DataStore.getStats();
+        }
 
         if (this.statusChart) this.statusChart.destroy();
 
@@ -136,7 +167,17 @@ const Dashboard = {
 
     updateRecentActivity() {
         const container = document.getElementById('recent-activity-list');
-        const activities = DataStore.getActivity();
+        let activities = DataStore.getActivity();
+
+        // Filter activity for driver's vehicles only
+        if (Auth.isDriver()) {
+            const user = Auth.getCurrentUser();
+            const driverVehicles = DataStore.getVehicles().filter(v => v.driver === user.name).map(v => v.id);
+            activities = activities.filter(a => {
+                if (a.vehicleId) return driverVehicles.includes(a.vehicleId);
+                return true; // keep non-vehicle activities
+            });
+        }
 
         if (activities.length === 0) {
             container.innerHTML = '<div class="activity-empty">No recent activity</div>';
@@ -159,9 +200,15 @@ const Dashboard = {
 
     updateFleetOverview() {
         const tbody = document.getElementById('fleet-overview-body');
-        const vehicles = DataStore.getVehicles().filter(v => v.status === 'active');
+        let vehicles = DataStore.getVehicles().filter(v => v.status === 'active');
         const settings = DataStore.getSettings();
         const maxMileage = settings.maxMileage || MAX_MILEAGE;
+
+        // Filter for driver's vehicles only
+        if (Auth.isDriver()) {
+            const user = Auth.getCurrentUser();
+            vehicles = vehicles.filter(v => v.driver === user.name);
+        }
 
         if (vehicles.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">No active vehicles</td></tr>`;

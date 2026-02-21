@@ -36,7 +36,8 @@ const DataStore = {
                 pushAlerts: false,
                 warningThreshold: WARNING_THRESHOLD,
                 maxMileage: MAX_MILEAGE,
-                theme: 'dark'
+                theme: 'dark',
+                driverSeeMileage: true
             });
         }
     },
@@ -226,7 +227,8 @@ const DataStore = {
             pushAlerts: false,
             warningThreshold: WARNING_THRESHOLD,
             maxMileage: MAX_MILEAGE,
-            theme: 'dark'
+            theme: 'dark',
+            driverSeeMileage: true
         };
     },
 
