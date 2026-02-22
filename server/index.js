@@ -52,6 +52,8 @@ app.use('/api/settings', require('./routes/settings'));
 app.use('/api/activity', require('./routes/activity'));
 app.use('/api/import', require('./routes/import'));
 app.use('/api/reports', require('./routes/reports'));
+app.use('/api/maintenance', require('./routes/maintenance'));
+app.use('/api/backup', require('./routes/backup'));
 
 // Health check
 app.get('/api/health', (req, res) => {

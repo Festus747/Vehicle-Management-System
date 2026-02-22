@@ -19,6 +19,10 @@ function mapVehicle(v) {
         notes: v.notes || '',
         warningAlertSent: !!v.warning_alert_sent,
         criticalAlertSent: !!v.critical_alert_sent,
+        registrationDate: v.registration_date || '',
+        registrationExpiry: v.registration_expiry || '',
+        insuranceDate: v.insurance_date || '',
+        insuranceExpiry: v.insurance_expiry || '',
         createdAt: v.created_at,
         updatedAt: v.updated_at
     };
@@ -54,12 +58,12 @@ router.get('/:id', authenticate, (req, res) => {
 // POST /api/vehicles
 router.post('/', authenticate, requireRole('admin'), (req, res) => {
     try {
-        const { id, registration, type, driver, mileage, status, fuelType, year, department, notes } = req.body;
+        const { id, registration, type, driver, mileage, status, fuelType, year, department, notes, registrationDate, registrationExpiry, insuranceDate, insuranceExpiry } = req.body;
         const vid = id || 'VH' + Date.now();
 
         execute(
-            'INSERT INTO vehicles (id, registration, type, driver, mileage, status, fuel_type, year, department, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [vid, registration, type, driver || '', mileage || 0, status || 'active', fuelType || 'Diesel', year || null, department || '', notes || '']
+            'INSERT INTO vehicles (id, registration, type, driver, mileage, status, fuel_type, year, department, notes, registration_date, registration_expiry, insurance_date, insurance_expiry) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [vid, registration, type, driver || '', mileage || 0, status || 'active', fuelType || 'Diesel', year || null, department || '', notes || '', registrationDate || null, registrationExpiry || null, insuranceDate || null, insuranceExpiry || null]
         );
 
         execute(
@@ -81,10 +85,10 @@ router.put('/:id', authenticate, requireRole('admin'), (req, res) => {
         const existing = queryOne('SELECT * FROM vehicles WHERE id = ?', [req.params.id]);
         if (!existing) return res.status(404).json({ error: 'Vehicle not found' });
 
-        const { registration, type, driver, mileage, status, fuelType, year, department, notes } = req.body;
+        const { registration, type, driver, mileage, status, fuelType, year, department, notes, registrationDate, registrationExpiry, insuranceDate, insuranceExpiry } = req.body;
 
         execute(
-            'UPDATE vehicles SET registration=?, type=?, driver=?, mileage=?, status=?, fuel_type=?, year=?, department=?, notes=?, updated_at=CURRENT_TIMESTAMP WHERE id=?',
+            'UPDATE vehicles SET registration=?, type=?, driver=?, mileage=?, status=?, fuel_type=?, year=?, department=?, notes=?, registration_date=?, registration_expiry=?, insurance_date=?, insurance_expiry=?, updated_at=CURRENT_TIMESTAMP WHERE id=?',
             [
                 registration || existing.registration,
                 type || existing.type,
@@ -95,6 +99,10 @@ router.put('/:id', authenticate, requireRole('admin'), (req, res) => {
                 year !== undefined ? year : existing.year,
                 department !== undefined ? department : existing.department,
                 notes !== undefined ? notes : existing.notes,
+                registrationDate !== undefined ? registrationDate : existing.registration_date,
+                registrationExpiry !== undefined ? registrationExpiry : existing.registration_expiry,
+                insuranceDate !== undefined ? insuranceDate : existing.insurance_date,
+                insuranceExpiry !== undefined ? insuranceExpiry : existing.insurance_expiry,
                 req.params.id
             ]
         );

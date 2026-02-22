@@ -4,6 +4,7 @@
 
 const Auth = {
     currentUser: null,
+    permissions: [],
 
     init() {
         // Check for saved session
@@ -11,22 +12,26 @@ const Auth = {
         const token = ApiClient.getToken();
         if (saved && token) {
             this.currentUser = saved;
+            this.permissions = saved.permissions || [];
             return true;
         }
         return false;
     },
 
-    async login(username, password, role) {
+    async login(username, password) {
         try {
-            const result = await ApiClient.login(username, password, role);
+            const result = await ApiClient.login(username, password);
             if (result && result.success) {
                 ApiClient.setToken(result.token);
                 this.currentUser = {
                     id: result.user.id,
                     username: result.user.username,
                     role: result.user.role,
-                    name: result.user.name
+                    name: result.user.name,
+                    staffId: result.user.staffId || '',
+                    permissions: result.user.permissions || []
                 };
+                this.permissions = result.user.permissions || [];
                 DataStore.set(DataStore.KEYS.CURRENT_USER, this.currentUser);
                 return { success: true, user: this.currentUser };
             }
@@ -34,23 +39,24 @@ const Auth = {
         } catch (err) {
             // Fallback to local auth when offline
             if (!navigator.onLine) {
-                return this.localLogin(username, password, role);
+                return this.localLogin(username, password);
             }
             return { success: false, message: err.message || 'Login failed' };
         }
     },
 
-    localLogin(username, password, role) {
+    localLogin(username, password) {
         var users = DataStore.get(DataStore.KEYS.USERS) || [];
         var user = users.find(function(u) {
-            return u.username === username && u.password === password && u.role === role;
+            return u.username === username && u.password === password;
         });
         if (user) {
-            this.currentUser = { username: user.username, role: user.role, name: user.name };
+            this.currentUser = { username: user.username, role: user.role, name: user.name, permissions: [] };
+            this.permissions = [];
             DataStore.set(DataStore.KEYS.CURRENT_USER, this.currentUser);
             return { success: true, user: this.currentUser };
         }
-        return { success: false, message: 'Invalid credentials' };
+        return { success: false, message: 'Invalid username or password. Please check your credentials and try again.' };
     },
 
     logout() {
@@ -58,6 +64,7 @@ const Auth = {
             DataStore.addActivity('auth', this.currentUser.name + ' logged out', 'fa-sign-out-alt');
         }
         this.currentUser = null;
+        this.permissions = [];
         ApiClient.setToken(null);
         localStorage.removeItem(DataStore.KEYS.CURRENT_USER);
     },
@@ -68,6 +75,11 @@ const Auth = {
 
     isDriver() {
         return this.currentUser && this.currentUser.role === 'driver';
+    },
+
+    hasPermission(perm) {
+        if (this.isAdmin()) return true;
+        return this.permissions.includes(perm);
     },
 
     getCurrentUser() {

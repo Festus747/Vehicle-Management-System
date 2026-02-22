@@ -57,6 +57,16 @@ const VehicleManager = {
             document.getElementById('v-driver').value = vehicle.driver || '';
             document.getElementById('v-mileage').value = vehicle.mileage || 0;
             document.getElementById('v-status').value = vehicle.status;
+
+            // Expiration date fields
+            var regDate = document.getElementById('v-reg-date');
+            var regExpiry = document.getElementById('v-reg-expiry');
+            var insDate = document.getElementById('v-ins-date');
+            var insExpiry = document.getElementById('v-ins-expiry');
+            if (regDate) regDate.value = vehicle.registrationDate || '';
+            if (regExpiry) regExpiry.value = vehicle.registrationExpiry || '';
+            if (insDate) insDate.value = vehicle.insuranceDate || '';
+            if (insExpiry) insExpiry.value = vehicle.insuranceExpiry || '';
         } else {
             this.editingVehicleId = null;
             title.textContent = 'Register Vehicle';
@@ -81,6 +91,16 @@ const VehicleManager = {
             mileage: parseInt(document.getElementById('v-mileage').value) || 0,
             status: document.getElementById('v-status').value
         };
+
+        // Add expiration date fields
+        var regDate = document.getElementById('v-reg-date');
+        var regExpiry = document.getElementById('v-reg-expiry');
+        var insDate = document.getElementById('v-ins-date');
+        var insExpiry = document.getElementById('v-ins-expiry');
+        if (regDate) vehicleData.registrationDate = regDate.value || null;
+        if (regExpiry) vehicleData.registrationExpiry = regExpiry.value || null;
+        if (insDate) vehicleData.insuranceDate = insDate.value || null;
+        if (insExpiry) vehicleData.insuranceExpiry = insExpiry.value || null;
 
         if (!vehicleData.id || !vehicleData.registration || !vehicleData.type) {
             UI.showToast('error', 'Validation Error', 'Please fill in all required fields');

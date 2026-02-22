@@ -1,13 +1,13 @@
 ﻿const bcrypt = require('bcryptjs');
-const { queryOne, execute } = require('./database');
+const { queryOne, queryAll, execute } = require('./database');
 
 async function seed() {
     console.log('Seeding database...');
 
     const defaultUsers = [
-        { username: 'admin', password: 'admin123', name: 'System Admin', role: 'admin' },
-        { username: 'driver1', password: 'driver123', name: 'Kwame Asante', role: 'driver' },
-        { username: 'driver2', password: 'driver123', name: 'Ama Mensah', role: 'driver' }
+        { username: 'admin', password: 'admin123', name: 'System Admin', role: 'admin', staff_id: 'ADM-001' },
+        { username: 'driver1', password: 'driver123', name: 'Kwame Asante', role: 'driver', staff_id: 'DRV-001' },
+        { username: 'driver2', password: 'driver123', name: 'Ama Mensah', role: 'driver', staff_id: 'DRV-002' }
     ];
 
     for (const user of defaultUsers) {
@@ -15,10 +15,22 @@ async function seed() {
         if (!existing) {
             const hash = await bcrypt.hash(user.password, 10);
             execute(
-                'INSERT INTO users (username, password, name, role) VALUES (?, ?, ?, ?)',
-                [user.username, hash, user.name, user.role]
+                'INSERT INTO users (username, password, name, role, staff_id, approved) VALUES (?, ?, ?, ?, ?, 1)',
+                [user.username, hash, user.name, user.role, user.staff_id || '']
             );
             console.log('  Created user:', user.username, '(' + user.role + ')');
+        }
+    }
+
+    // Set default permissions for all drivers
+    const drivers = queryAll("SELECT id FROM users WHERE role = 'driver'");
+    const defaultDriverPermissions = ['dashboard', 'my-vehicle', 'mileage', 'alerts', 'maintenance'];
+    for (const driver of drivers) {
+        for (const perm of defaultDriverPermissions) {
+            const existing = queryOne('SELECT id FROM user_permissions WHERE user_id = ? AND permission = ?', [driver.id, perm]);
+            if (!existing) {
+                execute('INSERT INTO user_permissions (user_id, permission, granted) VALUES (?, ?, 1)', [driver.id, perm]);
+            }
         }
     }
 
@@ -30,7 +42,8 @@ async function seed() {
         theme: 'dark',
         dateFormat: 'DD/MM/YYYY',
         companyName: 'Ghana Gas Company Ltd',
-        currency: 'GHS'
+        currency: 'GHS',
+        driverSeeMileage: 'true'
     };
 
     for (const [key, value] of Object.entries(defaultSettings)) {

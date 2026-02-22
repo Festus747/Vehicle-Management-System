@@ -21,15 +21,17 @@
     <link rel="icon" type="image/png" href="ghana-gas-logo.png">
 </head>
 <body>
+    <!-- LOGIN SCREEN -->
     <div id="login-screen" class="login-screen">
         <div class="login-container">
             <div class="login-header">
                 <div class="login-logo-wrapper">
-                    <img src="ghana-gas-logo.png" alt="Logo" class="login-logo">
+                    <img src="ghana-gas-logo.png" alt="Logo" class="login-logo" style="background: rgba(255,255,255,0.92); border-radius: 50%; padding: 6px;">
                 </div>
                 <h1>Vehicle Mileage Tracker</h1>
                 <p>Fleet Management System</p>
             </div>
+            <!-- Login Form -->
             <form id="login-form" class="login-form">
                 <div class="form-group">
                     <label for="login-username">Username</label>
@@ -39,61 +41,89 @@
                     <label for="login-password">Password</label>
                     <input type="password" id="login-password" placeholder="Enter password" required>
                 </div>
+                <div id="login-error" class="login-error hidden"></div>
+                <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+            </form>
+            <div class="login-footer">
+                <p style="margin-top:12px; font-size:13px; color:var(--text-muted);">Don't have an account? <a href="#" id="show-register-link" style="color:var(--accent-blue); cursor:pointer;">Register here</a></p>
+            </div>
+            <!-- Registration Form (hidden by default) -->
+            <form id="register-form" class="login-form hidden">
+                <h3 style="color:var(--text-bright); margin-bottom:16px; text-align:center;">Create Account</h3>
                 <div class="form-group">
-                    <label for="login-role">Login As</label>
-                    <select id="login-role">
-                        <option value="admin">Admin</option>
-                        <option value="driver">Driver</option>
-                    </select>
+                    <label for="reg-name">Full Name *</label>
+                    <input type="text" id="reg-name" placeholder="Enter full name" required>
                 </div>
-                <button type="submit" class="login-btn">Sign In</button>
-                <div class="login-hint">
-                    <p>Demo: admin/admin or driver/driver</p>
+                <div class="form-group">
+                    <label for="reg-staff-id">Staff ID</label>
+                    <input type="text" id="reg-staff-id" placeholder="e.g., DRV-003">
                 </div>
+                <div class="form-group">
+                    <label for="reg-username">Username *</label>
+                    <input type="text" id="reg-username" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-phone">Phone Number</label>
+                    <input type="text" id="reg-phone" placeholder="e.g., 020-000-0000">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password *</label>
+                    <input type="password" id="reg-password" placeholder="Choose a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm-password">Confirm Password *</label>
+                    <input type="password" id="reg-confirm-password" placeholder="Confirm password" required>
+                </div>
+                <div id="register-error" class="login-error hidden"></div>
+                <button type="submit" class="login-btn" style="background:var(--accent-green);"><i class="fas fa-user-plus"></i> Register</button>
+                <p style="margin-top:12px; font-size:13px; color:var(--text-muted); text-align:center;">Already have an account? <a href="#" id="show-login-link" style="color:var(--accent-blue); cursor:pointer;">Sign in</a></p>
             </form>
         </div>
     </div>
+
+    <!-- MAIN APP -->
     <div id="app-container" class="app-container hidden">
         <div class="titlebar">
             <div class="titlebar-left">
-                <img src="ghana-gas-logo.png" alt="Logo" class="titlebar-logo">
-                <span class="titlebar-app-name">Vehicle Mileage Tracker</span>
+                <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                <img src="ghana-gas-logo.png" alt="Logo" class="titlebar-logo" style="background: rgba(255,255,255,0.92); border-radius: 50%; padding: 2px;">
+                <span class="app-title">Vehicle Mileage Tracker</span>
             </div>
-            <div class="titlebar-center">
-                <button id="mobile-menu-btn" class="mobile-menu-btn hidden">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
+            <div class="titlebar-center"></div>
             <div class="titlebar-right">
-                <span id="current-user-display" class="user-badge">
-                    <i class="fas fa-user-circle"></i> <span id="user-name-display">Admin</span>
-                    <span id="user-role-badge" class="role-badge">ADMIN</span>
-                </span>
-                <button id="logout-btn" class="titlebar-btn" title="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+                <span id="user-name-display" class="user-info">Admin</span>
+                <span id="user-role-badge" class="role-badge">ADMIN</span>
+                <span id="alert-badge" class="alert-badge hidden">0</span>
+                <button id="logout-btn" class="titlebar-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
-        <div id="mobile-overlay" class="mobile-overlay hidden"></div>
         <div class="main-layout">
-            <div id="activity-bar" class="activity-bar">
-                <div class="activity-icons-top">
+            <div id="mobile-overlay" class="mobile-overlay hidden"></div>
+            <div class="activity-bar">
+                <div class="activity-icons">
                     <button class="activity-btn active" data-panel="dashboard" title="Dashboard">
                         <i class="fas fa-tachometer-alt"></i>
                         <span class="activity-label">Dashboard</span>
                     </button>
-                    <button class="activity-btn admin-only-nav" data-panel="vehicles" title="Vehicles">
+                    <button class="activity-btn perm-nav" data-panel="vehicles" data-perm="vehicles" title="Vehicles">
                         <i class="fas fa-car"></i>
                         <span class="activity-label">Vehicles</span>
                     </button>
-                    <button class="activity-btn" data-panel="mileage" title="Mileage">
+                    <button class="activity-btn perm-nav" data-panel="mileage" data-perm="mileage" title="Mileage">
                         <i class="fas fa-road"></i>
                         <span class="activity-label">Mileage</span>
                     </button>
-                    <button class="activity-btn" data-panel="alerts" title="Alerts">
+                    <button class="activity-btn perm-nav" data-panel="maintenance" data-perm="maintenance" title="Maintenance">
+                        <i class="fas fa-wrench"></i>
+                        <span class="activity-label">Maintenance</span>
+                    </button>
+                    <button class="activity-btn perm-nav" data-panel="alerts" data-perm="alerts" title="Alerts">
                         <i class="fas fa-bell"></i>
-                        <span id="alert-badge" class="alert-badge hidden">0</span>
                         <span class="activity-label">Alerts</span>
+                    </button>
+                    <button class="activity-btn perm-nav" data-panel="expiration" data-perm="expiration" title="Expiration">
+                        <i class="fas fa-calendar-check"></i>
+                        <span class="activity-label">Expiration</span>
                     </button>
                     <button class="activity-btn admin-only-nav" data-panel="reports" title="Reports">
                         <i class="fas fa-chart-bar"></i>
@@ -103,12 +133,20 @@
                         <i class="fas fa-id-card"></i>
                         <span class="activity-label">My Vehicle</span>
                     </button>
+                    <button class="activity-btn admin-only-nav" data-panel="users" title="Users">
+                        <i class="fas fa-users-cog"></i>
+                        <span class="activity-label">Users</span>
+                    </button>
                     <button class="activity-btn admin-only-nav" data-panel="upload" title="Import Data">
                         <i class="fas fa-file-upload"></i>
                         <span class="activity-label">Import</span>
                     </button>
                 </div>
                 <div class="activity-icons-bottom">
+                    <button class="activity-btn admin-only-nav" data-panel="data-mgmt" title="Data Management">
+                        <i class="fas fa-database"></i>
+                        <span class="activity-label">Data</span>
+                    </button>
                     <button class="activity-btn" data-panel="settings" title="Settings">
                         <i class="fas fa-cog"></i>
                         <span class="activity-label">Settings</span>
@@ -131,6 +169,7 @@
                     </div>
                 </div>
                 <div id="content-area" class="content-area">
+                    <!-- DASHBOARD PANEL -->
                     <div id="panel-dashboard" class="panel active">
                         <div class="panel-content dashboard-grid">
                             <div class="stats-row">
@@ -143,11 +182,13 @@
                                 <div class="chart-card"><h3>Fleet Mileage Distribution</h3><canvas id="mileage-chart"></canvas></div>
                                 <div class="chart-card"><h3>Vehicle Status Overview</h3><canvas id="status-chart"></canvas></div>
                             </div>
-                            <div class="recent-activity"><h3><i class="fas fa-clock"></i> Recent Activity</h3><div id="recent-activity-list" class="activity-list"><div class="activity-empty">No recent activity</div></div></div>
+                            <div class="recent-activity admin-only"><h3><i class="fas fa-clock"></i> Recent Activity</h3><div id="recent-activity-list" class="activity-list"><div class="activity-empty">No recent activity</div></div></div>
                             <div class="vehicle-quickview admin-only"><h3><i class="fas fa-car"></i> Vehicle Fleet Overview</h3><div id="fleet-overview-table" class="fleet-table-container"><table class="fleet-table"><thead><tr><th>Vehicle ID</th><th>Registration</th><th>Type</th><th>Driver</th><th>Mileage</th><th>Remaining</th><th>Status</th></tr></thead><tbody id="fleet-overview-body"></tbody></table></div></div>
                             <div id="driver-dashboard-vehicle" class="driver-only" style="display:none;"><h3><i class="fas fa-car"></i> My Assigned Vehicle</h3><div id="driver-dashboard-vehicle-content"></div></div>
                         </div>
                     </div>
+
+                    <!-- VEHICLES PANEL -->
                     <div id="panel-vehicles" class="panel">
                         <div class="panel-content">
                             <div class="panel-toolbar"><h2><i class="fas fa-car"></i> Vehicle Management</h2><div class="toolbar-actions admin-only"><button id="btn-add-vehicle" class="btn btn-primary"><i class="fas fa-plus"></i> Register Vehicle</button></div></div>
@@ -155,6 +196,8 @@
                             <div id="vehicles-table-container" class="table-container"><table class="data-table"><thead><tr><th>Vehicle ID</th><th>Registration</th><th>Type</th><th>Driver</th><th>Current Mileage</th><th>Remaining</th><th>Status</th><th class="admin-only">Actions</th></tr></thead><tbody id="vehicles-table-body"></tbody></table></div>
                         </div>
                     </div>
+
+                    <!-- MILEAGE PANEL -->
                     <div id="panel-mileage" class="panel">
                         <div class="panel-content">
                             <div class="panel-toolbar"><h2><i class="fas fa-road"></i> Mileage Tracking</h2><div class="toolbar-actions"><button id="btn-add-mileage" class="btn btn-primary"><i class="fas fa-plus"></i> Log Mileage</button></div></div>
@@ -162,13 +205,34 @@
                             <div id="mileage-table-container" class="table-container"><table class="data-table"><thead><tr><th>Date/Time</th><th>Vehicle ID</th><th>Registration</th><th>Previous</th><th>New</th><th>Added</th><th>Logged By</th></tr></thead><tbody id="mileage-table-body"></tbody></table></div>
                         </div>
                     </div>
+
+                    <!-- MAINTENANCE PANEL -->
+                    <div id="panel-maintenance" class="panel">
+                        <div class="panel-content">
+                            <div class="panel-toolbar"><h2><i class="fas fa-wrench"></i> Maintenance Log</h2><div class="toolbar-actions"><button id="btn-add-maintenance" class="btn btn-primary"><i class="fas fa-plus"></i> Log Maintenance</button></div></div>
+                            <div id="maintenance-table-container" class="table-container"><table class="data-table"><thead><tr><th>Date</th><th>Vehicle</th><th>Artisan/Company</th><th>Contact</th><th>Repair Work</th><th>Cost</th><th>Submitted By</th><th>Mileage Reset</th></tr></thead><tbody id="maintenance-table-body"></tbody></table></div>
+                        </div>
+                    </div>
+
+                    <!-- ALERTS PANEL -->
                     <div id="panel-alerts" class="panel">
                         <div class="panel-content">
                             <div class="panel-toolbar"><h2><i class="fas fa-bell"></i> Alerts & Notifications</h2><div class="toolbar-actions"><button id="btn-clear-alerts" class="btn btn-secondary"><i class="fas fa-check-double"></i> Mark All Read</button></div></div>
-                            <div class="alerts-filters"><button class="alert-filter-btn active" data-filter="all">All</button><button class="alert-filter-btn" data-filter="warning">Warning</button><button class="alert-filter-btn" data-filter="critical">Critical</button><button class="alert-filter-btn" data-filter="unread">Unread</button></div>
+                            <div class="alerts-filters"><button class="alert-filter-btn active" data-filter="all">All</button><button class="alert-filter-btn" data-filter="warning">Warning</button><button class="alert-filter-btn" data-filter="critical">Critical</button><button class="alert-filter-btn" data-filter="info">Info</button><button class="alert-filter-btn" data-filter="unread">Unread</button></div>
                             <div id="alerts-list" class="alerts-list"><div class="alert-empty">No alerts</div></div>
                         </div>
                     </div>
+
+                    <!-- EXPIRATION TRACKING PANEL -->
+                    <div id="panel-expiration" class="panel">
+                        <div class="panel-content">
+                            <div class="panel-toolbar"><h2><i class="fas fa-calendar-check"></i> Vehicle & Insurance Expiration</h2></div>
+                            <div class="expiration-summary" id="expiration-summary"></div>
+                            <div id="expiration-table-container" class="table-container"><table class="data-table"><thead><tr><th>Vehicle</th><th>Registration</th><th>Reg. Date</th><th>Reg. Expiry</th><th>Reg. Status</th><th>Insurance Date</th><th>Insurance Expiry</th><th>Ins. Status</th><th class="admin-only">Actions</th></tr></thead><tbody id="expiration-table-body"></tbody></table></div>
+                        </div>
+                    </div>
+
+                    <!-- REPORTS PANEL -->
                     <div id="panel-reports" class="panel">
                         <div class="panel-content">
                             <div class="panel-toolbar"><h2><i class="fas fa-chart-bar"></i> Reports</h2></div>
@@ -176,16 +240,34 @@
                                 <div class="report-card"><div class="report-icon"><i class="fas fa-history"></i></div><h3>Vehicle Mileage History</h3><p>Complete mileage log for all vehicles</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('mileage-history','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('mileage-history','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
                                 <div class="report-card"><div class="report-icon"><i class="fas fa-bell"></i></div><h3>Alert Logs</h3><p>History of all system alerts</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('alert-logs','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('alert-logs','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
                                 <div class="report-card"><div class="report-icon"><i class="fas fa-users"></i></div><h3>Driver Usage Report</h3><p>Mileage by driver with vehicle assignments</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('driver-usage','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('driver-usage','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
+                                <div class="report-card"><div class="report-icon"><i class="fas fa-wrench"></i></div><h3>Maintenance History</h3><p>Complete maintenance log for all vehicles</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('maintenance','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('maintenance','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
                                 <div class="report-card"><div class="report-icon"><i class="fas fa-car"></i></div><h3>Fleet Summary</h3><p>Current status of all vehicles</p><div class="report-actions"><button class="btn btn-primary btn-sm" onclick="Reports.download('fleet-summary','csv')"><i class="fas fa-file-csv"></i> CSV</button><button class="btn btn-secondary btn-sm" onclick="Reports.download('fleet-summary','pdf')"><i class="fas fa-file-pdf"></i> PDF</button></div></div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- MY VEHICLE PANEL (driver only) -->
                     <div id="panel-my-vehicle" class="panel">
                         <div class="panel-content">
                             <div class="panel-toolbar"><h2><i class="fas fa-id-card"></i> My Vehicle</h2></div>
                             <div id="my-vehicle-content" class="my-vehicle-content"><div class="no-vehicle-assigned"><i class="fas fa-car-side"></i><p>No vehicle currently assigned to you.</p></div></div>
                         </div>
                     </div>
+
+                    <!-- USER MANAGEMENT PANEL (admin only) -->
+                    <div id="panel-users" class="panel">
+                        <div class="panel-content">
+                            <div class="panel-toolbar"><h2><i class="fas fa-users-cog"></i> User Management</h2><div class="toolbar-actions"><button id="btn-add-user" class="btn btn-primary"><i class="fas fa-user-plus"></i> Create User</button></div></div>
+                            <div id="pending-users-section" class="pending-section hidden">
+                                <h3 style="color:var(--accent-orange); margin-bottom:12px;"><i class="fas fa-user-clock"></i> Pending Approvals</h3>
+                                <div id="pending-users-list"></div>
+                            </div>
+                            <h3 style="margin:16px 0 8px; color:var(--text-bright);"><i class="fas fa-users"></i> All Users</h3>
+                            <div id="users-table-container" class="table-container"><table class="data-table"><thead><tr><th>Name</th><th>Username</th><th>Staff ID</th><th>Role</th><th>Status</th><th>Permissions</th><th>Actions</th></tr></thead><tbody id="users-table-body"></tbody></table></div>
+                        </div>
+                    </div>
+
+                    <!-- IMPORT PANEL -->
                     <div id="panel-upload" class="panel">
                         <div class="panel-content">
                             <div class="panel-toolbar"><h2><i class="fas fa-file-upload"></i> Import Historical Data</h2></div>
@@ -213,15 +295,75 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- DATA MANAGEMENT PANEL (admin only) -->
+                    <div id="panel-data-mgmt" class="panel">
+                        <div class="panel-content">
+                            <div class="panel-toolbar"><h2><i class="fas fa-database"></i> Data Management & Backup</h2></div>
+                            <div class="settings-content">
+                                <div class="settings-section">
+                                    <h3><i class="fas fa-download"></i> Backup Data</h3>
+                                    <p class="setting-desc" style="margin-bottom:12px;">Download a backup of all your data. You can store this on Google Drive or any cloud storage for safekeeping.</p>
+                                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                        <button class="btn btn-primary" id="btn-backup-json"><i class="fas fa-file-download"></i> Download JSON Backup</button>
+                                        <button class="btn btn-secondary" id="btn-backup-db"><i class="fas fa-database"></i> Download Database File</button>
+                                    </div>
+                                </div>
+                                <div class="settings-section">
+                                    <h3><i class="fas fa-trash-alt"></i> Delete Specific Data</h3>
+                                    <p class="setting-desc" style="margin-bottom:12px;">Choose which data to remove. This action cannot be undone.</p>
+                                    <div style="display:flex; flex-direction:column; gap:10px;">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-tertiary); border-radius:6px;">
+                                            <span><i class="fas fa-road"></i> Mileage Logs</span>
+                                            <button class="btn btn-danger btn-sm" onclick="DataMgmt.deleteData('mileage-logs')"><i class="fas fa-trash"></i> Delete</button>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-tertiary); border-radius:6px;">
+                                            <span><i class="fas fa-wrench"></i> Maintenance Logs</span>
+                                            <button class="btn btn-danger btn-sm" onclick="DataMgmt.deleteData('maintenance-logs')"><i class="fas fa-trash"></i> Delete</button>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-tertiary); border-radius:6px;">
+                                            <span><i class="fas fa-bell"></i> Alerts</span>
+                                            <button class="btn btn-danger btn-sm" onclick="DataMgmt.deleteData('alerts')"><i class="fas fa-trash"></i> Delete</button>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-tertiary); border-radius:6px;">
+                                            <span><i class="fas fa-history"></i> Activity Log</span>
+                                            <button class="btn btn-danger btn-sm" onclick="DataMgmt.deleteData('activity')"><i class="fas fa-trash"></i> Delete</button>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:var(--bg-tertiary); border-radius:6px;">
+                                            <span><i class="fas fa-car"></i> All Vehicles & Related Data</span>
+                                            <button class="btn btn-danger btn-sm" onclick="DataMgmt.deleteData('vehicles')"><i class="fas fa-trash"></i> Delete</button>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(241,76,76,0.1); border:1px solid var(--accent-red); border-radius:6px;">
+                                            <span style="color:var(--accent-red); font-weight:600;"><i class="fas fa-exclamation-triangle"></i> Delete ALL Data</span>
+                                            <button class="btn btn-danger btn-sm" onclick="DataMgmt.deleteData('all')"><i class="fas fa-trash"></i> Delete Everything</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SETTINGS PANEL -->
                     <div id="panel-settings" class="panel">
                         <div class="panel-content">
                             <div class="panel-toolbar"><h2><i class="fas fa-cog"></i> Settings</h2></div>
                             <div class="settings-content">
+                                <div class="settings-section">
+                                    <h3>My Account</h3>
+                                    <div class="setting-item">
+                                        <label>Change Password</label>
+                                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+                                            <input type="password" id="current-password" placeholder="Current password" class="setting-input" style="flex:1; min-width:150px;">
+                                            <input type="password" id="new-password" placeholder="New password" class="setting-input" style="flex:1; min-width:150px;">
+                                            <button class="btn btn-primary btn-sm" id="btn-change-password"><i class="fas fa-key"></i> Change</button>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="settings-section"><h3>My Notification Preferences</h3><div class="setting-item"><label><input type="checkbox" id="setting-email-alerts" checked> Email Notifications</label><p class="setting-desc">Receive email alerts for mileage warnings</p></div><div class="setting-item"><label><input type="checkbox" id="setting-push-alerts"> Push Notifications</label><p class="setting-desc">Receive browser push notifications</p></div></div>
                                 <div class="settings-section admin-only"><h3>Mileage Policy</h3><div class="setting-item"><label>Warning Threshold (miles remaining)</label><input type="number" id="setting-warning-threshold" value="200" min="50" max="1000" class="setting-input"><p class="setting-desc">Alert when remaining mileage falls below this value</p></div><div class="setting-item"><label>Maximum Mileage Limit</label><input type="number" id="setting-max-mileage" value="5000" min="1000" max="100000" class="setting-input"><p class="setting-desc">Maximum mileage allowed per vehicle</p></div></div>
                                 <div class="settings-section admin-only"><h3>Driver Visibility</h3><div class="setting-item"><label><input type="checkbox" id="setting-driver-see-mileage" checked> Drivers can see Mileage Log page</label><p class="setting-desc">Allow drivers to view the mileage tracking page (filtered to their vehicles)</p></div></div>
                                 <div class="settings-section"><h3>Theme</h3><p class="setting-desc" style="margin-bottom:12px;">Choose your preferred look and feel</p><div id="theme-picker" class="theme-grid"></div></div>
-                                <div class="settings-section admin-only"><h3>Application</h3><div class="setting-item"><button id="btn-reset-data" class="btn btn-danger"><i class="fas fa-trash"></i> Reset All Data</button><p class="setting-desc">Clear all application data (cannot be undone)</p></div><div class="setting-item"><button id="btn-load-sample" class="btn btn-secondary"><i class="fas fa-database"></i> Load Sample Data</button><p class="setting-desc">Load sample vehicles and mileage data for testing</p></div></div>
+                                <div class="settings-section admin-only"><h3>Application</h3><div class="setting-item"><button id="btn-load-sample" class="btn btn-secondary"><i class="fas fa-database"></i> Load Sample Data</button><p class="setting-desc">Load sample vehicles and mileage data for testing</p></div></div>
                             </div>
                         </div>
                     </div>
@@ -230,10 +372,24 @@
         </div>
         <div class="statusbar"><div class="statusbar-left"><span id="status-role"><i class="fas fa-user"></i> Admin</span><span id="status-vehicles"><i class="fas fa-car"></i> 0 Vehicles</span></div><div class="statusbar-right"><span id="status-alerts"><i class="fas fa-bell"></i> 0 Alerts</span><span id="status-time"><i class="fas fa-clock"></i> --:--</span></div></div>
     </div>
-    <div id="modal-vehicle" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3 id="modal-vehicle-title">Register Vehicle</h3><button class="modal-close">&times;</button></div><form id="vehicle-form" class="modal-body"><div class="form-row"><div class="form-group"><label for="v-id">Vehicle ID *</label><input type="text" id="v-id" required placeholder="e.g., VH-001"></div><div class="form-group"><label for="v-reg">Registration Number *</label><input type="text" id="v-reg" required placeholder="e.g., ABC 1234"></div></div><div class="form-row"><div class="form-group"><label for="v-type">Vehicle Type *</label><select id="v-type" required><option value="">Select type</option><option value="Sedan">Sedan</option><option value="SUV">SUV</option><option value="Truck">Truck</option><option value="Van">Van</option><option value="Bus">Bus</option><option value="Motorcycle">Motorcycle</option></select></div><div class="form-group"><label for="v-driver">Assigned Driver</label><input type="text" id="v-driver" placeholder="Driver name"></div></div><div class="form-row"><div class="form-group"><label for="v-mileage">Current Mileage (miles)</label><input type="number" id="v-mileage" value="0" min="0" max="99999"></div><div class="form-group"><label for="v-status">Status</label><select id="v-status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Save Vehicle</button></div></form></div></div>
+
+    <!-- MODALS -->
+    <div id="modal-vehicle" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3 id="modal-vehicle-title">Register Vehicle</h3><button class="modal-close">&times;</button></div><form id="vehicle-form" class="modal-body"><div class="form-row"><div class="form-group"><label for="v-id">Vehicle ID *</label><input type="text" id="v-id" required placeholder="e.g., VH-001"></div><div class="form-group"><label for="v-reg">Registration Number *</label><input type="text" id="v-reg" required placeholder="e.g., ABC 1234"></div></div><div class="form-row"><div class="form-group"><label for="v-type">Vehicle Type *</label><select id="v-type" required><option value="">Select type</option><option value="Sedan">Sedan</option><option value="SUV">SUV</option><option value="Truck">Truck</option><option value="Van">Van</option><option value="Bus">Bus</option><option value="Motorcycle">Motorcycle</option></select></div><div class="form-group"><label for="v-driver">Assigned Driver</label><input type="text" id="v-driver" placeholder="Driver name"></div></div><div class="form-row"><div class="form-group"><label for="v-mileage">Current Mileage (miles)</label><input type="number" id="v-mileage" value="0" min="0" max="99999"></div><div class="form-group"><label for="v-status">Status</label><select id="v-status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div></div><div class="form-row"><div class="form-group"><label for="v-reg-date">Registration Date</label><input type="date" id="v-reg-date"></div><div class="form-group"><label for="v-reg-expiry">Registration Expiry</label><input type="date" id="v-reg-expiry"></div></div><div class="form-row"><div class="form-group"><label for="v-ins-date">Insurance Start Date</label><input type="date" id="v-ins-date"></div><div class="form-group"><label for="v-ins-expiry">Insurance Expiry</label><input type="date" id="v-ins-expiry"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Save Vehicle</button></div></form></div></div>
+
     <div id="modal-mileage" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3>Log Mileage Entry</h3><button class="modal-close">&times;</button></div><form id="mileage-form" class="modal-body"><div class="form-group"><label for="m-vehicle">Vehicle *</label><select id="m-vehicle" required><option value="">Select vehicle</option></select></div><div class="form-group" id="m-current-display"><label>Current Mileage</label><div class="current-mileage-display"><span id="m-current-value">--</span> miles <span class="mileage-remaining" id="m-remaining">-- remaining</span></div></div><div class="form-group"><label for="m-new-mileage">New Mileage Reading (miles) *</label><input type="number" id="m-new-mileage" required min="0" max="99999" placeholder="Enter new odometer reading"></div><div class="form-group"><label for="m-notes">Notes</label><textarea id="m-notes" placeholder="Optional notes about this entry"></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Log Mileage</button></div></form></div></div>
+
+    <div id="modal-maintenance" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3>Log Maintenance</h3><button class="modal-close">&times;</button></div><form id="maintenance-form" class="modal-body"><div class="form-group"><label for="mnt-vehicle">Vehicle *</label><select id="mnt-vehicle" required><option value="">Select vehicle</option></select></div><div class="form-row"><div class="form-group"><label for="mnt-artisan">Artisan / Technician Name *</label><input type="text" id="mnt-artisan" required placeholder="Name of person/company"></div><div class="form-group"><label for="mnt-company">Company Name</label><input type="text" id="mnt-company" placeholder="Company (if applicable)"></div></div><div class="form-row"><div class="form-group"><label for="mnt-contact">Contact Number *</label><input type="text" id="mnt-contact" required placeholder="e.g., 020-000-0000"></div><div class="form-group"><label for="mnt-date">Maintenance Date *</label><input type="date" id="mnt-date" required></div></div><div class="form-group"><label for="mnt-work">Repair Work Performed *</label><textarea id="mnt-work" required placeholder="Describe the maintenance/repair work done"></textarea></div><div class="form-row"><div class="form-group"><label for="mnt-cost">Cost (GHS)</label><input type="number" id="mnt-cost" min="0" step="0.01" placeholder="0.00"></div><div class="form-group"><label for="mnt-notes">Notes</label><input type="text" id="mnt-notes" placeholder="Additional notes"></div></div><div class="form-group"><label><input type="checkbox" id="mnt-reset-mileage"> Reset vehicle mileage to 0 after this maintenance</label><p class="setting-desc">The mileage counter will restart from zero</p></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Submit Maintenance Log</button></div></form></div></div>
+
+    <div id="modal-create-user" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3>Create User</h3><button class="modal-close">&times;</button></div><form id="create-user-form" class="modal-body"><div class="form-row"><div class="form-group"><label for="cu-name">Full Name *</label><input type="text" id="cu-name" required placeholder="Full name"></div><div class="form-group"><label for="cu-staff-id">Staff ID *</label><input type="text" id="cu-staff-id" required placeholder="e.g., DRV-003"></div></div><div class="form-row"><div class="form-group"><label for="cu-username">Username *</label><input type="text" id="cu-username" required placeholder="Username"></div><div class="form-group"><label for="cu-role">Role *</label><select id="cu-role" required><option value="driver">Driver</option><option value="admin">Admin</option></select></div></div><div class="form-row"><div class="form-group"><label for="cu-password">Password *</label><input type="password" id="cu-password" required placeholder="Password"></div><div class="form-group"><label for="cu-phone">Phone</label><input type="text" id="cu-phone" placeholder="Phone number"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Create User</button></div></form></div></div>
+
+    <div id="modal-permissions" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3 id="modal-permissions-title">Edit Permissions</h3><button class="modal-close">&times;</button></div><div id="permissions-content" class="modal-body"><div id="permissions-list" style="padding:16px;"></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="button" class="btn btn-primary" id="btn-save-permissions">Save Permissions</button></div></div></div></div>
+
     <div id="modal-vehicle-details" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container modal-lg"><div class="modal-header"><h3>Vehicle Details</h3><button class="modal-close">&times;</button></div><div id="vehicle-details-content" class="modal-body"></div></div></div>
+
+    <div id="modal-expiration-edit" class="modal hidden"><div class="modal-overlay"></div><div class="modal-container"><div class="modal-header"><h3 id="modal-expiration-title">Edit Expiration Dates</h3><button class="modal-close">&times;</button></div><form id="expiration-form" class="modal-body"><input type="hidden" id="exp-vehicle-id"><div class="form-row"><div class="form-group"><label for="exp-reg-date">Registration Date</label><input type="date" id="exp-reg-date"></div><div class="form-group"><label for="exp-reg-expiry">Registration Expiry</label><input type="date" id="exp-reg-expiry"></div></div><div class="form-row"><div class="form-group"><label for="exp-ins-date">Insurance Start Date</label><input type="date" id="exp-ins-date"></div><div class="form-group"><label for="exp-ins-expiry">Insurance Expiry Date</label><input type="date" id="exp-ins-expiry"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Save Dates</button></div></form></div></div>
+
     <div id="toast-container" class="toast-container"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="js/api.js"></script>
@@ -245,6 +401,10 @@
     <script src="js/reports.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/import.js"></script>
+    <script src="js/maintenance.js"></script>
+    <script src="js/users.js"></script>
+    <script src="js/expiration.js"></script>
+    <script src="js/datamgmt.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/app.js"></script>
 </body>

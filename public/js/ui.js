@@ -39,15 +39,19 @@ const UI = {
         }
 
         // Settings
-        document.getElementById('btn-reset-data').addEventListener('click', () => {
-            if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
-                DataStore.resetAll();
-                App.refreshAll();
-                this.showToast('success', 'Data Reset', 'All data has been reset');
-            }
-        });
+        var resetBtn = document.getElementById('btn-reset-data');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
+                    DataStore.resetAll();
+                    App.refreshAll();
+                    this.showToast('success', 'Data Reset', 'All data has been reset');
+                }
+            });
+        }
 
-        document.getElementById('btn-load-sample').addEventListener('click', () => {
+        var loadSampleBtn = document.getElementById('btn-load-sample');
+        if (loadSampleBtn) loadSampleBtn.addEventListener('click', () => {
             DataStore.loadSampleData();
             App.refreshAll();
             this.showToast('success', 'Sample Data Loaded', 'Sample vehicles and mileage data have been loaded');
@@ -147,11 +151,18 @@ const UI = {
     },
 
     navigateTo(panel) {
-        // Access control - block drivers from admin-only panels
+        // Access control - check permissions for drivers
         if (Auth.isDriver()) {
-            const adminOnlyPanels = ['vehicles', 'reports', 'upload'];
+            const adminOnlyPanels = ['vehicles', 'reports', 'upload', 'users', 'data-mgmt'];
             if (adminOnlyPanels.includes(panel)) {
                 this.showToast('warning', 'Access Denied', 'This section is only available to administrators');
+                return;
+            }
+
+            // Check permission-based pages
+            const permPanels = ['maintenance', 'expiration', 'mileage', 'alerts'];
+            if (permPanels.includes(panel) && !Auth.hasPermission(panel)) {
+                this.showToast('warning', 'Access Denied', 'You do not have permission to access this section');
                 return;
             }
 
@@ -208,6 +219,18 @@ const UI = {
             case 'my-vehicle':
                 DriverView.render();
                 break;
+            case 'maintenance':
+                if (typeof MaintenanceManager !== 'undefined') MaintenanceManager.render();
+                break;
+            case 'expiration':
+                if (typeof ExpirationManager !== 'undefined') ExpirationManager.render();
+                break;
+            case 'users':
+                if (typeof UserManager !== 'undefined') UserManager.render();
+                break;
+            case 'data-mgmt':
+                if (typeof DataMgmt !== 'undefined') DataMgmt.render();
+                break;
         }
     },
 
@@ -221,6 +244,10 @@ const UI = {
             'reports': { icon: 'fa-chart-bar', label: 'Reports' },
             'my-vehicle': { icon: 'fa-id-card', label: 'My Vehicle' },
             'upload': { icon: 'fa-file-upload', label: 'Import' },
+            'maintenance': { icon: 'fa-wrench', label: 'Maintenance' },
+            'expiration': { icon: 'fa-calendar-times', label: 'Expiration' },
+            'users': { icon: 'fa-users-cog', label: 'Users' },
+            'data-mgmt': { icon: 'fa-database', label: 'Data Management' },
             'settings': { icon: 'fa-cog', label: 'Settings' }
         };
 
@@ -343,6 +370,39 @@ const UI = {
                     '</div>';
                 break;
 
+            case 'maintenance':
+                container.innerHTML = '<div class="sidebar-section">' +
+                    '<div class="sidebar-section-header"><i class="fas fa-chevron-down"></i> Maintenance</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-wrench"></i> All Records</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-plus"></i> Log Maintenance</div>' +
+                    '</div>';
+                break;
+
+            case 'expiration':
+                container.innerHTML = '<div class="sidebar-section">' +
+                    '<div class="sidebar-section-header"><i class="fas fa-chevron-down"></i> Expiration Tracking</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-id-card"></i> Registration</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-shield-alt"></i> Insurance</div>' +
+                    '</div>';
+                break;
+
+            case 'users':
+                container.innerHTML = '<div class="sidebar-section">' +
+                    '<div class="sidebar-section-header"><i class="fas fa-chevron-down"></i> User Management</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-users"></i> All Users</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-user-plus"></i> Create User</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-user-clock"></i> Pending Approval</div>' +
+                    '</div>';
+                break;
+
+            case 'data-mgmt':
+                container.innerHTML = '<div class="sidebar-section">' +
+                    '<div class="sidebar-section-header"><i class="fas fa-chevron-down"></i> Data Management</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-download"></i> Export Backup</div>' +
+                    '<div class="sidebar-item"><i class="fas fa-trash"></i> Delete Data</div>' +
+                    '</div>';
+                break;
+
             default:
                 container.innerHTML = '';
         }
@@ -404,6 +464,12 @@ const UI = {
             document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.driver-only').forEach(el => el.style.display = '');
 
+            // Permission-based nav for drivers
+            document.querySelectorAll('.perm-nav').forEach(el => {
+                const perm = el.getAttribute('data-perm');
+                el.style.display = Auth.hasPermission(perm) ? '' : 'none';
+            });
+
             // Check mileage page visibility
             const settings = DataStore.getSettings();
             const mileageBtn = document.querySelector('[data-panel="mileage"]');
@@ -417,6 +483,7 @@ const UI = {
         } else {
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
             document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = '');
+            document.querySelectorAll('.perm-nav').forEach(el => el.style.display = '');
             document.querySelectorAll('.driver-only').forEach(el => el.style.display = 'none');
         }
 

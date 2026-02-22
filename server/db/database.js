@@ -16,12 +16,14 @@ if (!isVercel && dbPath) {
 }
 
 const SCHEMA = [
-    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, name TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('admin', 'driver')), created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)",
-    "CREATE TABLE IF NOT EXISTS vehicles (id TEXT PRIMARY KEY, registration TEXT NOT NULL, type TEXT NOT NULL, driver TEXT DEFAULT '', mileage REAL DEFAULT 0, status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive')), fuel_type TEXT DEFAULT 'Diesel', year INTEGER, department TEXT DEFAULT '', notes TEXT DEFAULT '', warning_alert_sent INTEGER DEFAULT 0, critical_alert_sent INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)",
+    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, name TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('admin', 'driver')), staff_id TEXT DEFAULT '', phone TEXT DEFAULT '', approved INTEGER DEFAULT 1, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)",
+    "CREATE TABLE IF NOT EXISTS vehicles (id TEXT PRIMARY KEY, registration TEXT NOT NULL, type TEXT NOT NULL, driver TEXT DEFAULT '', mileage REAL DEFAULT 0, status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive')), fuel_type TEXT DEFAULT 'Diesel', year INTEGER, department TEXT DEFAULT '', notes TEXT DEFAULT '', warning_alert_sent INTEGER DEFAULT 0, critical_alert_sent INTEGER DEFAULT 0, registration_date DATE, registration_expiry DATE, insurance_date DATE, insurance_expiry DATE, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)",
     "CREATE TABLE IF NOT EXISTS mileage_logs (id TEXT PRIMARY KEY, vehicle_id TEXT NOT NULL, previous_mileage REAL NOT NULL, new_mileage REAL NOT NULL, miles_added REAL NOT NULL, logged_by TEXT NOT NULL, notes TEXT DEFAULT '', timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE)",
-    "CREATE TABLE IF NOT EXISTS alerts (id TEXT PRIMARY KEY, vehicle_id TEXT NOT NULL, type TEXT NOT NULL CHECK(type IN ('warning', 'critical', 'info')), title TEXT NOT NULL, message TEXT NOT NULL, read INTEGER DEFAULT 0, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE)",
+    "CREATE TABLE IF NOT EXISTS alerts (id TEXT PRIMARY KEY, vehicle_id TEXT DEFAULT '', type TEXT NOT NULL CHECK(type IN ('warning', 'critical', 'info')), title TEXT NOT NULL, message TEXT NOT NULL, read INTEGER DEFAULT 0, target_user_id INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)",
     "CREATE TABLE IF NOT EXISTS activity_log (id TEXT PRIMARY KEY, type TEXT NOT NULL, message TEXT NOT NULL, icon TEXT DEFAULT 'fa-info-circle', vehicle_id TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)",
-    "CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)"
+    "CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
+    "CREATE TABLE IF NOT EXISTS maintenance_logs (id TEXT PRIMARY KEY, vehicle_id TEXT NOT NULL, artisan_name TEXT NOT NULL, company_name TEXT DEFAULT '', contact_number TEXT NOT NULL, repair_work TEXT NOT NULL, maintenance_date DATE NOT NULL, cost REAL DEFAULT 0, notes TEXT DEFAULT '', submitted_by TEXT NOT NULL, reset_mileage INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE)",
+    "CREATE TABLE IF NOT EXISTS user_permissions (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, permission TEXT NOT NULL, granted INTEGER DEFAULT 1, UNIQUE(user_id, permission), FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)"
 ];
 
 async function initDatabase() {
@@ -49,6 +51,22 @@ async function initDatabase() {
 
     for (var i = 0; i < SCHEMA.length; i++) {
         db.run(SCHEMA[i]);
+    }
+
+    // Migrations: safely add columns to existing tables
+    var migrations = [
+        "ALTER TABLE users ADD COLUMN staff_id TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN phone TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN approved INTEGER DEFAULT 1",
+        "ALTER TABLE users ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP",
+        "ALTER TABLE vehicles ADD COLUMN registration_date DATE",
+        "ALTER TABLE vehicles ADD COLUMN registration_expiry DATE",
+        "ALTER TABLE vehicles ADD COLUMN insurance_date DATE",
+        "ALTER TABLE vehicles ADD COLUMN insurance_expiry DATE",
+        "ALTER TABLE alerts ADD COLUMN target_user_id INTEGER"
+    ];
+    for (var m = 0; m < migrations.length; m++) {
+        try { db.run(migrations[m]); } catch (e) { /* column already exists */ }
     }
 
     if (!isVercel) {

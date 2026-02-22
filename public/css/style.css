@@ -203,6 +203,21 @@ body {
     background: #0098ff;
 }
 
+.login-error {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.login-error.hidden {
+    display: none;
+}
+
 .login-hint {
     text-align: center;
     margin-top: 16px;
@@ -853,6 +868,10 @@ body {
 
 .alert-item .alert-icon.critical {
     color: var(--status-exceeded);
+}
+
+.alert-item .alert-icon.info {
+    color: var(--accent-blue);
 }
 
 .alert-item .alert-body {

@@ -77,22 +77,60 @@ const ApiClient = {
     },
 
     // Auth
-    async login(username, password, role) {
+    async login(username, password) {
         return this.request('/api/auth/login', {
             method: 'POST',
-            body: JSON.stringify({ username, password, role })
+            body: JSON.stringify({ username, password })
         });
     },
 
-    async register(username, password, name, role) {
+    async register(data) {
         return this.request('/api/auth/register', {
             method: 'POST',
-            body: JSON.stringify({ username, password, name, role })
+            body: JSON.stringify(data)
         });
     },
 
     async getMe() {
         return this.request('/api/auth/me');
+    },
+
+    // User Management
+    async getUsers() {
+        return this.request('/api/auth/users');
+    },
+
+    async createUser(data) {
+        return this.request('/api/auth/create-user', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    },
+
+    async approveUser(id) {
+        return this.request(`/api/auth/approve/${id}`, { method: 'PUT' });
+    },
+
+    async rejectUser(id) {
+        return this.request(`/api/auth/reject/${id}`, { method: 'PUT' });
+    },
+
+    async changePassword(currentPassword, newPassword) {
+        return this.request('/api/auth/change-password', {
+            method: 'PUT',
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+    },
+
+    async deleteUser(id) {
+        return this.request(`/api/auth/users/${id}`, { method: 'DELETE' });
+    },
+
+    async updatePermissions(userId, permissions) {
+        return this.request(`/api/auth/permissions/${userId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ permissions })
+        });
     },
 
     // Vehicles
@@ -208,6 +246,57 @@ const ApiClient = {
         });
 
         return response.json();
+    },
+
+    // Maintenance
+    async getMaintenanceLogs() {
+        return this.request('/api/maintenance');
+    },
+
+    async addMaintenanceLog(data) {
+        return this.request('/api/maintenance', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    },
+
+    async deleteMaintenanceLog(id) {
+        return this.request(`/api/maintenance/${id}`, { method: 'DELETE' });
+    },
+
+    // Backup & Data Management
+    async exportBackup() {
+        const token = this.getToken();
+        const response = await fetch('/api/backup/export', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'vehicle-management-backup-' + new Date().toISOString().slice(0,10) + '.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        return { success: true };
+    },
+
+    async exportDatabase() {
+        const token = this.getToken();
+        const response = await fetch('/api/backup/db', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'vehicle-management-' + new Date().toISOString().slice(0,10) + '.db';
+        a.click();
+        URL.revokeObjectURL(url);
+        return { success: true };
+    },
+
+    async deleteData(type) {
+        return this.request(`/api/backup/data/${type}`, { method: 'DELETE' });
     },
 
     // Offline queue

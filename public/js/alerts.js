@@ -90,6 +90,9 @@ const AlertsManager = {
             case 'critical':
                 alerts = alerts.filter(a => a.type === 'critical');
                 break;
+            case 'info':
+                alerts = alerts.filter(a => a.type === 'info');
+                break;
             case 'unread':
                 alerts = alerts.filter(a => !a.read);
                 break;
@@ -105,7 +108,7 @@ const AlertsManager = {
             return `
                 <div class="alert-item ${a.read ? '' : 'unread'}" onclick="AlertsManager.markRead('${a.id}')">
                     <div class="alert-icon ${a.type}">
-                        <i class="fas ${a.type === 'critical' ? 'fa-times-circle' : 'fa-exclamation-triangle'}"></i>
+                        <i class="fas ${a.type === 'critical' ? 'fa-times-circle' : a.type === 'info' ? 'fa-info-circle' : 'fa-exclamation-triangle'}"></i>
                     </div>
                     <div class="alert-body">
                         <div class="alert-title">${a.title}</div>
