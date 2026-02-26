@@ -82,18 +82,18 @@ const App = {
     },
 
     async handleLogin() {
-        var username = document.getElementById('login-username').value.trim();
+        var email = document.getElementById('login-email').value.trim();
         var password = document.getElementById('login-password').value;
         var errorDiv = document.getElementById('login-error');
 
         if (errorDiv) { errorDiv.classList.add('hidden'); errorDiv.textContent = ''; }
 
-        if (!username || !password) {
+        if (!email || !password) {
             if (errorDiv) {
-                errorDiv.textContent = 'Please enter username and password';
+                errorDiv.textContent = 'Please enter email and password';
                 errorDiv.classList.remove('hidden');
             } else {
-                UI.showToast('error', 'Login Error', 'Please enter username and password');
+                UI.showToast('error', 'Login Error', 'Please enter email and password');
             }
             return;
         }
@@ -105,7 +105,7 @@ const App = {
         btn.disabled = true;
 
         try {
-            var result = await Auth.login(username, password);
+            var result = await Auth.login(email, password);
             if (result.success) {
                 if (errorDiv) { errorDiv.classList.add('hidden'); errorDiv.textContent = ''; }
                 UI.showApp();
@@ -137,7 +137,7 @@ const App = {
     async handleRegister() {
         var name = document.getElementById('reg-name').value.trim();
         var staffId = document.getElementById('reg-staff-id').value.trim();
-        var username = document.getElementById('reg-username').value.trim();
+        var email = document.getElementById('reg-email').value.trim();
         var phone = document.getElementById('reg-phone').value.trim();
         var password = document.getElementById('reg-password').value;
         var confirm = document.getElementById('reg-confirm-password').value;
@@ -145,7 +145,7 @@ const App = {
 
         if (errorDiv) { errorDiv.classList.add('hidden'); errorDiv.textContent = ''; }
 
-        if (!name || !username || !password) {
+        if (!name || !email || !password) {
             if (errorDiv) { errorDiv.textContent = 'Please fill in all required fields'; errorDiv.classList.remove('hidden'); }
             else UI.showToast('error', 'Registration Error', 'Please fill in all required fields');
             return;
@@ -164,7 +164,7 @@ const App = {
         }
 
         try {
-            var result = await ApiClient.register({ name, staffId, username, phone, password });
+            var result = await ApiClient.register({ name, staffId, email, phone, password });
             if (result && (result.success || result.message)) {
                 UI.showToast('success', 'Registration Submitted', result.message || 'Your account is pending admin approval. You will be notified once approved.');
                 document.getElementById('register-form').reset();

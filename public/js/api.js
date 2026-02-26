@@ -77,10 +77,10 @@ const ApiClient = {
     },
 
     // Auth
-    async login(username, password) {
+    async login(email, password) {
         return this.request('/api/auth/login', {
             method: 'POST',
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ email, password })
         });
     },
 
