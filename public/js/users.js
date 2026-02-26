@@ -51,18 +51,18 @@ const UserManager = {
     async createUser() {
         var name = document.getElementById('cu-name').value.trim();
         var staffId = document.getElementById('cu-staff-id').value.trim();
-        var username = document.getElementById('cu-username').value.trim();
+        var email = document.getElementById('cu-email').value.trim();
         var role = document.getElementById('cu-role').value;
         var password = document.getElementById('cu-password').value;
         var phone = document.getElementById('cu-phone').value.trim();
 
-        if (!name || !staffId || !username || !password) {
+        if (!name || !staffId || !email || !password) {
             UI.showToast('error', 'Validation Error', 'Please fill in all required fields');
             return;
         }
 
         try {
-            var result = await ApiClient.createUser({ name, staffId, username, role, password, phone });
+            var result = await ApiClient.createUser({ name, staffId, email, role, password, phone });
             if (result && (result.id || result.success)) {
                 UI.showToast('success', 'User Created', 'User ' + name + ' has been created successfully');
                 document.getElementById('modal-create-user').classList.add('hidden');
@@ -105,7 +105,7 @@ const UserManager = {
                     return '<div style="display:flex; align-items:center; justify-content:space-between; padding:12px; margin-bottom:8px; background:var(--bg-tertiary); border-radius:6px; border-left:3px solid var(--accent-orange);">' +
                         '<div>' +
                         '<strong style="color:var(--text-bright);">' + u.name + '</strong>' +
-                        '<span style="margin-left:8px; color:var(--text-muted); font-size:12px;">@' + u.username + '</span>' +
+                        (u.email ? '<span style="margin-left:8px; color:var(--text-muted); font-size:12px;">' + u.email + '</span>' : '') +
                         (u.staffId ? '<span style="margin-left:8px; color:var(--text-muted); font-size:12px;">ID: ' + u.staffId + '</span>' : '') +
                         (u.phone ? '<span style="margin-left:8px; color:var(--text-muted); font-size:12px;"><i class="fas fa-phone"></i> ' + u.phone + '</span>' : '') +
                         '</div>' +
@@ -132,7 +132,7 @@ const UserManager = {
 
             return '<tr>' +
                 '<td><strong>' + u.name + '</strong></td>' +
-                '<td>' + u.username + '</td>' +
+                '<td>' + (u.email || '-') + '</td>' +
                 '<td>' + (u.staffId || '-') + '</td>' +
                 '<td><span class="role-badge" style="background:' + (u.role === 'admin' ? 'var(--accent-blue)' : 'var(--accent-green)') + '; padding:2px 8px; border-radius:3px; font-size:11px; color:white;">' + u.role.toUpperCase() + '</span></td>' +
                 '<td><span class="status-badge status-normal"><i class="fas fa-check-circle"></i> Active</span></td>' +

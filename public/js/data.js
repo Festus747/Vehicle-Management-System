@@ -19,9 +19,9 @@ const DataStore = {
     init() {
         if (!this.get(this.KEYS.USERS)) {
             this.set(this.KEYS.USERS, [
-                { username: 'admin', password: 'admin', role: 'admin', name: 'Fleet Admin' },
-                { username: 'driver', password: 'driver', role: 'driver', name: 'John Driver' },
-                { username: 'driver2', password: 'driver2', role: 'driver', name: 'Jane Smith' }
+                { email: 'admin@example.com', password: 'admin', role: 'admin', name: 'Fleet Admin' },
+                { email: 'driver@example.com', password: 'driver', role: 'driver', name: 'John Driver' },
+                { email: 'driver2@example.com', password: 'driver2', role: 'driver', name: 'Jane Smith' }
             ]);
         }
         if (!this.get(this.KEYS.VEHICLES)) this.set(this.KEYS.VEHICLES, []);

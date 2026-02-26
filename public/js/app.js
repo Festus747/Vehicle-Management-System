@@ -115,7 +115,7 @@ const App = {
                 this.refreshAll();
             } else {
                 if (errorDiv) {
-                    errorDiv.textContent = result.message || 'Invalid username or password. Please check your credentials and try again.';
+                    errorDiv.textContent = result.message || 'Invalid email or password. Please check your credentials and try again.';
                     errorDiv.classList.remove('hidden');
                 } else {
                     UI.showToast('error', 'Login Failed', result.message);
