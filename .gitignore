@@ -3,7 +3,9 @@ node_modules/
 server/db/*.db
 *.log
 .DS_Store
-.DS_Store
 Thumbs.db
 .vercel
 uploads/
+
+# Prisma
+prisma/migrations/

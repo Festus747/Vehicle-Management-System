@@ -1,0 +1,135 @@
+// ============================================================
+// Vehicle Mileage Tracking System - Production Database Schema
+// ============================================================
+// Normalized, relational schema with strict constraints.
+// Designed for PostgreSQL via Prisma ORM.
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ──────────────────────────────────────────────
+// ENUMS
+// ──────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  DRIVER
+  MANAGER
+}
+
+enum VehicleStatus {
+  ACTIVE
+  NEAR_LIMIT
+  LIMIT_EXCEEDED
+}
+
+enum AlertType {
+  NEAR_LIMIT
+  LIMIT_EXCEEDED
+}
+
+// ──────────────────────────────────────────────
+// MODELS
+// ──────────────────────────────────────────────
+
+/// System user — Admin, Manager, or Driver
+model User {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String   @db.VarChar(255)
+  email         String   @unique @db.VarChar(255)
+  password_hash String   @db.VarChar(255)
+  role          Role     @default(DRIVER)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  assigned_vehicle Vehicle?        @relation("AssignedDriver")
+  mileage_records  MileageRecord[] @relation("RecordedBy")
+
+  @@map("users")
+}
+
+/// Company vehicle tracked by the system
+model Vehicle {
+  id                  String        @id @default(uuid()) @db.Uuid
+  registration_number String        @unique @db.VarChar(50)
+  assigned_driver_id  String?       @unique @db.Uuid
+  mileage_limit       Int           @default(5000)
+  current_mileage     Float         @default(0)
+  status              VehicleStatus @default(ACTIVE)
+  deleted_at          DateTime?     // Soft delete timestamp (null = active)
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
+
+  // Relations
+  assigned_driver     User?               @relation("AssignedDriver", fields: [assigned_driver_id], references: [id], onDelete: SetNull)
+  mileage_records     MileageRecord[]
+  alerts              Alert[]
+  maintenance_records MaintenanceRecord[]
+
+  @@index([status])
+  @@index([assigned_driver_id])
+  @@index([deleted_at])
+  @@map("vehicles")
+}
+
+/// Immutable historical mileage entry.
+/// Records must NEVER be updated or deleted.
+model MileageRecord {
+  id               String   @id @default(uuid()) @db.Uuid
+  vehicle_id       String   @db.Uuid
+  recorded_mileage Float
+  recorded_at      DateTime @default(now())
+  recorded_by      String   @db.Uuid
+
+  // Relations
+  vehicle Vehicle @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+  user    User    @relation("RecordedBy", fields: [recorded_by], references: [id], onDelete: Cascade)
+
+  @@index([vehicle_id, recorded_at])
+  @@index([recorded_by])
+  @@map("mileage_records")
+}
+
+/// System-generated alert when a vehicle crosses a mileage threshold.
+/// Triggered exactly once per threshold crossing.
+model Alert {
+  id           String    @id @default(uuid()) @db.Uuid
+  vehicle_id   String    @db.Uuid
+  alert_type   AlertType
+  message      String    @db.Text
+  triggered_at DateTime  @default(now())
+  acknowledged Boolean   @default(false)
+
+  // Relations
+  vehicle Vehicle @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+
+  @@index([vehicle_id])
+  @@index([alert_type])
+  @@index([acknowledged])
+  @@map("alerts")
+}
+
+/// Maintenance record for a vehicle service event.
+model MaintenanceRecord {
+  id                 String   @id @default(uuid()) @db.Uuid
+  vehicle_id         String   @db.Uuid
+  description        String   @db.Text
+  mileage_at_service Float
+  service_date       DateTime @db.Date
+  created_at         DateTime @default(now())
+
+  // Relations
+  vehicle Vehicle @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+
+  @@index([vehicle_id])
+  @@index([service_date])
+  @@map("maintenance_records")
+}
