@@ -18,14 +18,14 @@ const Auth = {
         return false;
     },
 
-    async login(username, password) {
+    async login(email, password) {
         try {
-            const result = await ApiClient.login(username, password);
+            const result = await ApiClient.login(email, password);
             if (result && result.success) {
                 ApiClient.setToken(result.token);
                 this.currentUser = {
                     id: result.user.id,
-                    username: result.user.username,
+                    email: result.user.email,
                     role: result.user.role,
                     name: result.user.name,
                     staffId: result.user.staffId || '',
@@ -39,24 +39,24 @@ const Auth = {
         } catch (err) {
             // Fallback to local auth when offline
             if (!navigator.onLine) {
-                return this.localLogin(username, password);
+                return this.localLogin(email, password);
             }
             return { success: false, message: err.message || 'Login failed' };
         }
     },
 
-    localLogin(username, password) {
+    localLogin(email, password) {
         var users = DataStore.get(DataStore.KEYS.USERS) || [];
         var user = users.find(function(u) {
-            return u.username === username && u.password === password;
+            return u.email === email && u.password === password;
         });
         if (user) {
-            this.currentUser = { username: user.username, role: user.role, name: user.name, permissions: [] };
+            this.currentUser = { email: user.email, role: user.role, name: user.name, permissions: [] };
             this.permissions = [];
             DataStore.set(DataStore.KEYS.CURRENT_USER, this.currentUser);
             return { success: true, user: this.currentUser };
         }
-        return { success: false, message: 'Invalid username or password. Please check your credentials and try again.' };
+        return { success: false, message: 'Invalid email or password. Please check your credentials and try again.' };
     },
 
     logout() {
