@@ -46,6 +46,10 @@ model User {
   email         String   @unique @db.VarChar(255)
   password_hash String   @db.VarChar(255)
   role          Role     @default(DRIVER)
+  approved      Boolean  @default(false)
+  staff_id      String?  @db.VarChar(100)
+  phone         String?  @db.VarChar(50)
+  permissions   String[] @default([])
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
@@ -58,15 +62,20 @@ model User {
 
 /// Company vehicle tracked by the system
 model Vehicle {
-  id                  String        @id @default(uuid()) @db.Uuid
-  registration_number String        @unique @db.VarChar(50)
-  assigned_driver_id  String?       @unique @db.Uuid
-  mileage_limit       Int           @default(5000)
-  current_mileage     Float         @default(0)
-  status              VehicleStatus @default(ACTIVE)
-  deleted_at          DateTime?     // Soft delete timestamp (null = active)
-  created_at          DateTime      @default(now())
-  updated_at          DateTime      @updatedAt
+  id                    String        @id @default(uuid()) @db.Uuid
+  registration_number   String        @unique @db.VarChar(50)
+  vehicle_type          String?       @db.VarChar(50)
+  assigned_driver_id    String?       @unique @db.Uuid
+  mileage_limit         Int           @default(5000)
+  current_mileage       Float         @default(0)
+  status                VehicleStatus @default(ACTIVE)
+  road_worthy_start     DateTime?     @db.Date
+  road_worthy_expiry    DateTime?     @db.Date
+  insurance_start       DateTime?     @db.Date
+  insurance_expiry      DateTime?     @db.Date
+  deleted_at            DateTime?     // Soft delete timestamp (null = active)
+  created_at            DateTime      @default(now())
+  updated_at            DateTime      @updatedAt
 
   // Relations
   assigned_driver     User?               @relation("AssignedDriver", fields: [assigned_driver_id], references: [id], onDelete: SetNull)

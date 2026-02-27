@@ -192,10 +192,8 @@ const UI = {
         const panelEl = document.getElementById('panel-' + panel);
         if (panelEl) panelEl.classList.add('active');
 
-        // Manage tabs
-        if (!this.openTabs.includes(panel)) {
-            this.openTabs.push(panel);
-        }
+        // Manage tabs - single tab behavior
+        this.openTabs = [panel];
         this.renderTabs();
 
         // Close mobile sidebar after navigation
@@ -230,6 +228,9 @@ const UI = {
                 break;
             case 'data-mgmt':
                 if (typeof DataMgmt !== 'undefined') DataMgmt.render();
+                break;
+            case 'settings':
+                if (typeof App !== 'undefined' && App.populateProfile) App.populateProfile();
                 break;
         }
     },
@@ -501,6 +502,9 @@ const UI = {
 
         // Render theme picker
         this.renderThemePicker();
+
+        // Populate profile fields
+        if (typeof App !== 'undefined' && App.populateProfile) App.populateProfile();
 
         // Navigate to appropriate default panel
         if (Auth.isDriver()) {

@@ -133,6 +133,13 @@ const ApiClient = {
         });
     },
 
+    async updateProfile(data) {
+        return this.request('/api/auth/profile', {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    },
+
     // Vehicles
     async getVehicles() {
         return this.request('/api/vehicles');

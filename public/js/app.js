@@ -79,6 +79,55 @@ const App = {
                 App.handleChangePassword();
             });
         }
+
+        // Bind save profile button
+        var saveProfileBtn = document.getElementById('btn-save-profile');
+        if (saveProfileBtn) {
+            saveProfileBtn.addEventListener('click', function() {
+                App.handleSaveProfile();
+            });
+        }
+    },
+
+    populateProfile() {
+        var user = Auth.getCurrentUser();
+        if (!user) return;
+        var nameEl = document.getElementById('profile-name');
+        var emailEl = document.getElementById('profile-email');
+        var staffEl = document.getElementById('profile-staff-id');
+        var phoneEl = document.getElementById('profile-phone');
+        if (nameEl) nameEl.value = user.name || '';
+        if (emailEl) emailEl.value = user.email || '';
+        if (staffEl) staffEl.value = user.staffId || '';
+        if (phoneEl) phoneEl.value = user.phone || '';
+    },
+
+    async handleSaveProfile() {
+        var name = document.getElementById('profile-name').value.trim();
+        var staffId = document.getElementById('profile-staff-id').value.trim();
+        var phone = document.getElementById('profile-phone').value.trim();
+
+        if (!name) {
+            UI.showToast('error', 'Error', 'Name is required');
+            return;
+        }
+
+        try {
+            var result = await ApiClient.updateProfile({ name, staffId, phone });
+            if (result && result.success) {
+                // Update local user data
+                Auth.currentUser.name = result.user.name;
+                Auth.currentUser.staffId = result.user.staffId || '';
+                Auth.currentUser.phone = result.user.phone || '';
+                DataStore.set(DataStore.KEYS.CURRENT_USER, Auth.currentUser);
+                document.getElementById('user-name-display').textContent = result.user.name;
+                UI.showToast('success', 'Profile Updated', 'Your profile has been saved');
+            } else {
+                UI.showToast('error', 'Error', result ? result.error : 'Failed to update profile');
+            }
+        } catch (err) {
+            UI.showToast('error', 'Error', err.message || 'Failed to update profile');
+        }
     },
 
     async handleLogin() {

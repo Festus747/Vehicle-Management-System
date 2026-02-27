@@ -23,24 +23,28 @@ async function main() {
       email: 'admin@ghanagas.com',
       password: 'admin123',
       role: 'ADMIN',
+      staff_id: 'ADM-001',
     },
     {
       name: 'Fleet Manager',
       email: 'manager@ghanagas.com',
       password: 'manager123',
       role: 'MANAGER',
+      staff_id: 'MGR-001',
     },
     {
       name: 'Kwame Asante',
       email: 'kwame@ghanagas.com',
       password: 'driver123',
       role: 'DRIVER',
+      staff_id: 'DRV-001',
     },
     {
       name: 'Ama Mensah',
       email: 'ama@ghanagas.com',
       password: 'driver123',
       role: 'DRIVER',
+      staff_id: 'DRV-002',
     },
   ];
 
@@ -54,6 +58,9 @@ async function main() {
           email: u.email,
           password_hash,
           role: u.role,
+          approved: true,
+          staff_id: u.staff_id || null,
+          permissions: u.role === 'DRIVER' ? ['dashboard', 'my-vehicle', 'mileage', 'alerts', 'maintenance'] : [],
         },
       });
       console.log(`  ✅ Created user: ${user.name} (${user.role}) — ${user.email}`);

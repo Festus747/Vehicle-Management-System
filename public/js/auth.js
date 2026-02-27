@@ -29,6 +29,7 @@ const Auth = {
                     role: result.user.role,
                     name: result.user.name,
                     staffId: result.user.staffId || '',
+                    phone: result.user.phone || '',
                     permissions: result.user.permissions || []
                 };
                 this.permissions = result.user.permissions || [];
@@ -70,11 +71,15 @@ const Auth = {
     },
 
     isAdmin() {
-        return this.currentUser && this.currentUser.role === 'admin';
+        return this.currentUser && (this.currentUser.role === 'admin' || this.currentUser.role === 'ADMIN' || this.currentUser.role === 'MANAGER' || this.currentUser.role === 'manager');
+    },
+
+    isManager() {
+        return this.currentUser && (this.currentUser.role === 'MANAGER' || this.currentUser.role === 'manager');
     },
 
     isDriver() {
-        return this.currentUser && this.currentUser.role === 'driver';
+        return this.currentUser && (this.currentUser.role === 'driver' || this.currentUser.role === 'DRIVER');
     },
 
     hasPermission(perm) {
