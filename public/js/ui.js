@@ -23,6 +23,7 @@ const UI = {
 
         // Logout
         document.getElementById('logout-btn').addEventListener('click', () => {
+            App.stopAutoSync();
             Auth.logout();
             this.showLogin();
         });

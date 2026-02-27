@@ -33,6 +33,8 @@ const App = {
             this.refreshAll();
             // Sync with server and refresh again when data is ready
             this.syncWithServer().then(() => this.refreshAll());
+            // Start auto-sync every 30 seconds so changes reflect across browsers
+            this.startAutoSync();
         } else {
             UI.showLogin();
         }
@@ -164,6 +166,8 @@ const App = {
                 // Sync data from server first, then refresh UI
                 await this.syncWithServer();
                 this.refreshAll();
+                // Start auto-sync so changes from other browsers appear
+                this.startAutoSync();
             } else {
                 if (errorDiv) {
                     errorDiv.textContent = result.message || 'Invalid email or password. Please check your credentials and try again.';
@@ -280,6 +284,22 @@ const App = {
             }
         } catch (err) {
             console.warn('[App] Server sync failed:', err.message);
+        }
+    },
+
+    _autoSyncInterval: null,
+
+    startAutoSync() {
+        this.stopAutoSync();
+        this._autoSyncInterval = setInterval(() => {
+            this.syncWithServer();
+        }, 30000); // Sync every 30 seconds
+    },
+
+    stopAutoSync() {
+        if (this._autoSyncInterval) {
+            clearInterval(this._autoSyncInterval);
+            this._autoSyncInterval = null;
         }
     },
 

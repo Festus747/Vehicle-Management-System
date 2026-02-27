@@ -163,20 +163,23 @@ const DataStore = {
         return { success: true };
     },
 
-    updateVehicle(vehicleId, updates) {
+    updateVehicle(vehicleId, updates, options) {
+        options = options || {};
         const vehicles = this.getVehicles();
         const idx = vehicles.findIndex(v => v.id === vehicleId);
         if (idx === -1) return { success: false, message: 'Vehicle not found' };
         vehicles[idx] = { ...vehicles[idx], ...updates, updatedAt: new Date().toISOString() };
         this.set(this.KEYS.VEHICLES, vehicles);
 
-        // Async API call — then sync to get server-resolved driver info
-        ApiClient.updateVehicle(vehicleId, updates).then(() => {
-            this.syncFromServer();
-        }).catch(err => {
-            console.warn('[DataStore] API update vehicle failed:', err.message);
-            UI.showToast('warning', 'Sync Warning', 'Vehicle updated locally but server sync failed: ' + err.message);
-        });
+        // Skip API call for internal updates (e.g. mileage logging handles its own API)
+        if (!options.skipApi) {
+            ApiClient.updateVehicle(vehicleId, updates).then(() => {
+                this.syncFromServer();
+            }).catch(err => {
+                console.warn('[DataStore] API update vehicle failed:', err.message);
+                UI.showToast('warning', 'Sync Warning', 'Vehicle updated locally but server sync failed: ' + err.message);
+            });
+        }
 
         return { success: true };
     },
@@ -232,7 +235,8 @@ const DataStore = {
         allLogs.push(log);
         this.set(this.KEYS.MILEAGE_LOGS, allLogs);
 
-        this.updateVehicle(vehicleId, { mileage: newMileage });
+        // Update vehicle locally only — the mileage API handles server-side update
+        this.updateVehicle(vehicleId, { mileage: newMileage }, { skipApi: true });
 
         const settings = this.getSettings();
         const maxMileage = settings.maxMileage || MAX_MILEAGE;
@@ -244,19 +248,21 @@ const DataStore = {
                 'CRITICAL: Vehicle ' + vehicleId + ' has exceeded the mileage limit!',
                 'Current mileage: ' + newMileage + ' miles. Limit: ' + maxMileage + ' miles. Exceeded by ' + Math.abs(remaining) + ' miles.'
             );
-            this.updateVehicle(vehicleId, { criticalAlertSent: true });
+            this.updateVehicle(vehicleId, { criticalAlertSent: true }, { skipApi: true });
         } else if (remaining <= warnThreshold && remaining > 0 && !vehicle.warningAlertSent) {
             AlertsManager.createAlert(vehicleId, 'warning',
                 'WARNING: Vehicle ' + vehicleId + ' is approaching mileage limit',
                 'Current mileage: ' + newMileage + ' miles. Only ' + remaining + ' miles remaining.'
             );
-            this.updateVehicle(vehicleId, { warningAlertSent: true });
+            this.updateVehicle(vehicleId, { warningAlertSent: true }, { skipApi: true });
         }
 
         this.addActivity('mileage', 'Mileage updated for ' + vehicleId + ': ' + prevMileage + ' to ' + newMileage + ' miles (+' + (newMileage - prevMileage) + ')', 'fa-road', vehicleId);
 
-        // Async API call
-        ApiClient.addMileageLog(vehicleId, newMileage, notes).catch(err => {
+        // Async API call — mileage route handles vehicle update + alerts server-side
+        ApiClient.addMileageLog(vehicleId, newMileage, notes).then(() => {
+            this.syncFromServer();
+        }).catch(err => {
             console.warn('[DataStore] API add mileage failed:', err.message);
         });
 
