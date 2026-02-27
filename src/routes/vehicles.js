@@ -1,6 +1,7 @@
 const express = require('express');
 const vehicleService = require('../services/vehicle.service');
 const mileageService = require('../services/mileage.service');
+const { logActivity } = require('../services/activity.service');
 const { authenticate } = require('../middleware/auth');
 const { authorize } = require('../middleware/rbac');
 const { validate } = require('../middleware/validate');
@@ -21,6 +22,14 @@ router.post(
   async (req, res, next) => {
     try {
       const vehicle = await vehicleService.createVehicle(req.body);
+      logActivity({
+        type: 'vehicle',
+        message: 'Vehicle ' + (vehicle.fleet_number || vehicle.registration_number) + ' registered',
+        icon: 'fa-car',
+        vehicleId: vehicle.fleet_number || vehicle.registration_number,
+        userId: req.user.id,
+        userName: req.user.name || req.user.email,
+      });
       res.status(201).json(vehicle);
     } catch (err) {
       next(err);
@@ -66,6 +75,14 @@ router.patch(
   async (req, res, next) => {
     try {
       const vehicle = await vehicleService.updateVehicle(req.params.id, req.body);
+      logActivity({
+        type: 'vehicle',
+        message: 'Vehicle ' + (vehicle.fleet_number || vehicle.registration_number) + ' updated',
+        icon: 'fa-edit',
+        vehicleId: vehicle.fleet_number || vehicle.registration_number,
+        userId: req.user.id,
+        userName: req.user.name || req.user.email,
+      });
       res.json(vehicle);
     } catch (err) {
       next(err);
@@ -84,6 +101,14 @@ router.put(
   async (req, res, next) => {
     try {
       const vehicle = await vehicleService.updateVehicle(req.params.id, req.body);
+      logActivity({
+        type: 'vehicle',
+        message: 'Vehicle ' + (vehicle.fleet_number || vehicle.registration_number) + ' updated',
+        icon: 'fa-edit',
+        vehicleId: vehicle.fleet_number || vehicle.registration_number,
+        userId: req.user.id,
+        userName: req.user.name || req.user.email,
+      });
       res.json(vehicle);
     } catch (err) {
       next(err);
@@ -98,6 +123,14 @@ router.put(
 router.delete('/:id', authenticate, authorize('ADMIN'), async (req, res, next) => {
   try {
     await vehicleService.deleteVehicle(req.params.id);
+    logActivity({
+      type: 'vehicle',
+      message: 'Vehicle ' + req.params.id + ' deactivated',
+      icon: 'fa-trash',
+      vehicleId: req.params.id,
+      userId: req.user.id,
+      userName: req.user.name || req.user.email,
+    });
     res.json({ success: true, message: 'Vehicle deleted (soft delete).' });
   } catch (err) {
     next(err);

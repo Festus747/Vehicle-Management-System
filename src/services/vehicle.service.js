@@ -5,11 +5,20 @@ const prisma = require('../lib/prisma');
  * Accepts both backend (registration_number) and frontend (registration, id as fleet_number) field names.
  */
 async function createVehicle(data) {
+  // If a driver name is provided (from frontend), look up the user by name
+  let driverId = data.assigned_driver_id || null;
+  if (!driverId && data.driver && typeof data.driver === 'string' && data.driver.trim()) {
+    const driverUser = await prisma.user.findFirst({
+      where: { name: { equals: data.driver.trim(), mode: 'insensitive' } },
+    });
+    if (driverUser) driverId = driverUser.id;
+  }
+
   const createData = {
     registration_number: data.registration_number || data.registration,
     fleet_number: data.fleet_number || data.id || null,
     vehicle_type: data.vehicle_type || data.type || null,
-    assigned_driver_id: data.assigned_driver_id || null,
+    assigned_driver_id: driverId,
     mileage_limit: data.mileage_limit || 5000,
     current_mileage: data.current_mileage || data.mileage || 0,
     status: data.status === 'inactive' ? 'ACTIVE' : 'ACTIVE',
@@ -105,6 +114,17 @@ async function updateVehicle(id, data) {
   if (data.registration_number !== undefined) updateData.registration_number = data.registration_number;
   if (data.registration !== undefined) updateData.registration_number = data.registration;
   if (data.assigned_driver_id !== undefined) updateData.assigned_driver_id = data.assigned_driver_id;
+  // If a driver name is provided (from frontend), look up the user by name
+  if (data.driver !== undefined && typeof data.driver === 'string') {
+    if (data.driver.trim()) {
+      const driverUser = await prisma.user.findFirst({
+        where: { name: { equals: data.driver.trim(), mode: 'insensitive' } },
+      });
+      if (driverUser) updateData.assigned_driver_id = driverUser.id;
+    } else {
+      updateData.assigned_driver_id = null; // unassign if empty
+    }
+  }
   if (data.mileage_limit !== undefined) updateData.mileage_limit = Number(data.mileage_limit);
   if (data.vehicle_type !== undefined) updateData.vehicle_type = data.vehicle_type;
   if (data.type !== undefined) updateData.vehicle_type = data.type;

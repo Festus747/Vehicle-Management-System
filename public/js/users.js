@@ -110,8 +110,8 @@ const UserManager = {
                         (u.phone ? '<span style="margin-left:8px; color:var(--text-muted); font-size:12px;"><i class="fas fa-phone"></i> ' + u.phone + '</span>' : '') +
                         '</div>' +
                         '<div style="display:flex; gap:6px;">' +
-                        '<button class="btn btn-primary btn-sm" onclick="UserManager.approveUser(' + u.id + ')"><i class="fas fa-check"></i> Approve</button>' +
-                        '<button class="btn btn-danger btn-sm" onclick="UserManager.rejectUser(' + u.id + ')"><i class="fas fa-times"></i> Reject</button>' +
+                        '<button class="btn btn-primary btn-sm" onclick="UserManager.approveUser(\'' + u.id + '\')"><i class="fas fa-check"></i> Approve</button>' +
+                        '<button class="btn btn-danger btn-sm" onclick="UserManager.rejectUser(\'' + u.id + '\')"><i class="fas fa-times"></i> Reject</button>' +
                         '</div></div>';
                 }).join('');
             } else {
@@ -134,13 +134,13 @@ const UserManager = {
                 '<td><strong>' + u.name + '</strong></td>' +
                 '<td>' + (u.email || '-') + '</td>' +
                 '<td>' + (u.staffId || '-') + '</td>' +
-                '<td><span class="role-badge" style="background:' + (u.role === 'admin' ? 'var(--accent-blue)' : 'var(--accent-green)') + '; padding:2px 8px; border-radius:3px; font-size:11px; color:white;">' + u.role.toUpperCase() + '</span></td>' +
+                '<td><span class="role-badge" style="background:' + (u.role === 'admin' || u.role === 'ADMIN' ? 'var(--accent-blue)' : u.role === 'MANAGER' || u.role === 'manager' ? 'var(--accent-orange)' : 'var(--accent-green)') + '; padding:2px 8px; border-radius:3px; font-size:11px; color:white;">' + u.role.toUpperCase() + '</span></td>' +
                 '<td><span class="status-badge status-normal"><i class="fas fa-check-circle"></i> Active</span></td>' +
                 '<td style="max-width:200px;">' + permStr + '</td>' +
                 '<td>' +
                 '<div class="action-btn-group">' +
-                '<button class="btn-icon" title="Edit Permissions" onclick="UserManager.openPermissionsModal(' + u.id + ')"><i class="fas fa-key"></i></button>' +
-                (u.role !== 'admin' ? '<button class="btn-icon" title="Delete User" onclick="UserManager.deleteUser(' + u.id + ')"><i class="fas fa-trash" style="color:var(--accent-red)"></i></button>' : '') +
+                '<button class="btn-icon" title="Edit Permissions" onclick="UserManager.openPermissionsModal(\'' + u.id + '\')"><i class="fas fa-key"></i></button>' +
+                (u.role !== 'admin' && u.role !== 'ADMIN' ? '<button class="btn-icon" title="Delete User" onclick="UserManager.deleteUser(\'' + u.id + '\')"><i class="fas fa-trash" style="color:var(--accent-red)"></i></button>' : '') +
                 '</div>' +
                 '</td>' +
                 '</tr>';

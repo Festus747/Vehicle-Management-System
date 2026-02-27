@@ -1,5 +1,6 @@
 const express = require('express');
 const authService = require('../services/auth.service');
+const { logActivity } = require('../services/activity.service');
 const { authenticate } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const { validateRegister, validateLogin } = require('../validators/auth');
@@ -21,6 +22,11 @@ router.post('/register', validate(validateRegister), async (req, res, next) => {
   try {
     const { name, email, password, role, staffId, phone } = req.body;
     const user = await authService.register({ name, email, password, role, staffId, phone });
+    logActivity({
+      type: 'user',
+      message: 'New user registered: ' + name + ' (' + email + ') - pending approval',
+      icon: 'fa-user-plus',
+    });
     res.status(201).json({
       success: true,
       message: 'Registration submitted. Your account is pending admin approval.',
@@ -115,6 +121,13 @@ router.post('/create-user', authenticate, requireAdmin, async (req, res, next) =
 router.put('/approve/:id', authenticate, requireAdmin, async (req, res, next) => {
   try {
     const result = await authService.approveUser(req.params.id);
+    logActivity({
+      type: 'user',
+      message: 'User approved (ID: ' + req.params.id + ')',
+      icon: 'fa-user-check',
+      userId: req.user.id,
+      userName: req.user.name || req.user.email,
+    });
     res.json(result);
   } catch (err) {
     next(err);
@@ -127,6 +140,13 @@ router.put('/approve/:id', authenticate, requireAdmin, async (req, res, next) =>
 router.put('/reject/:id', authenticate, requireAdmin, async (req, res, next) => {
   try {
     const result = await authService.rejectUser(req.params.id);
+    logActivity({
+      type: 'user',
+      message: 'User rejected (ID: ' + req.params.id + ')',
+      icon: 'fa-user-times',
+      userId: req.user.id,
+      userName: req.user.name || req.user.email,
+    });
     res.json(result);
   } catch (err) {
     next(err);

@@ -1,5 +1,6 @@
 const express = require('express');
 const { authenticate } = require('../middleware/auth');
+const { logActivity } = require('../services/activity.service');
 const prisma = require('../lib/prisma');
 
 const router = express.Router();
@@ -161,6 +162,15 @@ router.post('/', authenticate, async (req, res, next) => {
         });
       }
     }
+
+    logActivity({
+      type: 'mileage',
+      message: 'Mileage updated for ' + (vehicle.fleet_number || vehicle.registration_number) + ': ' + vehicle.current_mileage + ' to ' + newMileage + ' miles',
+      icon: 'fa-road',
+      vehicleId: vehicle.fleet_number || vehicle.registration_number,
+      userId: req.user.id,
+      userName: req.user.name || req.user.email,
+    });
 
     res.status(201).json({ success: true, record });
   } catch (err) {

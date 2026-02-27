@@ -1,5 +1,6 @@
 const express = require('express');
 const maintenanceService = require('../services/maintenance.service');
+const { logActivity } = require('../services/activity.service');
 const { authenticate } = require('../middleware/auth');
 const { authorize } = require('../middleware/rbac');
 const prisma = require('../lib/prisma');
@@ -52,6 +53,14 @@ router.post(
       // Add submitted_by from authenticated user
       const data = { ...req.body, submittedBy: req.user.name || req.user.email };
       const record = await maintenanceService.createMaintenanceRecord(data);
+      logActivity({
+        type: 'maintenance',
+        message: 'Maintenance logged for vehicle ' + (req.body.vehicleId || 'unknown') + (req.body.repairWork ? ': ' + req.body.repairWork : ''),
+        icon: 'fa-wrench',
+        vehicleId: req.body.vehicleId || null,
+        userId: req.user.id,
+        userName: req.user.name || req.user.email,
+      });
       res.status(201).json(record);
     } catch (err) {
       next(err);

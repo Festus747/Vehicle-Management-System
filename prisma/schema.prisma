@@ -151,3 +151,19 @@ model MaintenanceRecord {
   @@index([service_date])
   @@map("maintenance_records")
 }
+
+/// Activity log — shared system-wide activity feed visible to admin/manager.
+model Activity {
+  id         String   @id @default(uuid()) @db.Uuid
+  type       String   @db.VarChar(50)   // vehicle, mileage, alert, maintenance, user, system
+  message    String   @db.Text
+  icon       String?  @db.VarChar(50)
+  vehicle_id String?  @db.VarChar(100)  // fleet_number or UUID reference
+  user_id    String?  @db.Uuid
+  user_name  String?  @db.VarChar(255)
+  created_at DateTime @default(now())
+
+  @@index([created_at])
+  @@index([type])
+  @@map("activities")
+}

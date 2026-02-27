@@ -104,7 +104,6 @@ const App = {
 
     async handleSaveProfile() {
         var name = document.getElementById('profile-name').value.trim();
-        var staffId = document.getElementById('profile-staff-id').value.trim();
         var phone = document.getElementById('profile-phone').value.trim();
 
         if (!name) {
@@ -113,7 +112,7 @@ const App = {
         }
 
         try {
-            var result = await ApiClient.updateProfile({ name, staffId, phone });
+            var result = await ApiClient.updateProfile({ name, phone });
             if (result && result.success) {
                 // Update local user data
                 Auth.currentUser.name = result.user.name;
@@ -209,20 +208,29 @@ const App = {
             return;
         }
 
-        if (password.length < 4) {
-            if (errorDiv) { errorDiv.textContent = 'Password must be at least 4 characters'; errorDiv.classList.remove('hidden'); }
-            else UI.showToast('error', 'Registration Error', 'Password must be at least 4 characters');
+        if (password.length < 6) {
+            if (errorDiv) { errorDiv.textContent = 'Password must be at least 6 characters'; errorDiv.classList.remove('hidden'); }
+            else UI.showToast('error', 'Registration Error', 'Password must be at least 6 characters');
             return;
         }
+
+        // Show loading state on register button
+        var regBtn = document.querySelector('#register-form .login-btn, #register-form button[type=submit]');
+        var regOrigText = regBtn ? regBtn.textContent : '';
+        if (regBtn) { regBtn.textContent = 'Registering...'; regBtn.disabled = true; }
 
         try {
             var result = await ApiClient.register({ name, staffId, email, phone, password });
             if (result && (result.success || result.message)) {
-                UI.showToast('success', 'Registration Submitted', result.message || 'Your account is pending admin approval. You will be notified once approved.');
+                // Clear form and switch to login view
                 document.getElementById('register-form').reset();
                 document.getElementById('register-form').classList.add('hidden');
                 document.getElementById('login-form').classList.remove('hidden');
-                document.querySelector('.login-footer').classList.remove('hidden');
+                var loginFooter = document.querySelector('.login-footer');
+                if (loginFooter) loginFooter.classList.remove('hidden');
+                // Show success message AFTER switching views so user sees it on login page
+                UI.showToast('success', 'Registration Successful', result.message || 'Your account is pending admin approval. You will be notified once approved.');
+                if (errorDiv) { errorDiv.classList.add('hidden'); errorDiv.textContent = ''; }
             } else {
                 var errMsg = result ? result.error : 'Registration failed';
                 if (errorDiv) { errorDiv.textContent = errMsg; errorDiv.classList.remove('hidden'); }
@@ -233,6 +241,8 @@ const App = {
             if (errorDiv) { errorDiv.textContent = errMsg2; errorDiv.classList.remove('hidden'); }
             else UI.showToast('error', 'Registration Error', errMsg2);
         }
+
+        if (regBtn) { regBtn.textContent = regOrigText; regBtn.disabled = false; }
     },
 
     async handleChangePassword() {
