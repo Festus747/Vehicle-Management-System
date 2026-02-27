@@ -43,19 +43,66 @@ const DataStore = {
     // Sync local cache with API data
     async syncFromServer() {
         try {
-            const [vehiclesRes, mileageRes, alertsRes, activityRes, settingsRes] = await Promise.all([
-                ApiClient.getVehicles(),
-                ApiClient.getMileageLogs(),
-                ApiClient.getAlerts(),
-                ApiClient.getActivity(),
-                ApiClient.getSettings()
+            const [vehiclesRes, mileageRes, alertsRes, settingsRes] = await Promise.all([
+                ApiClient.getVehicles().catch(function() { return null; }),
+                ApiClient.getMileageLogs().catch(function() { return null; }),
+                ApiClient.getAlerts().catch(function() { return null; }),
+                ApiClient.getSettings().catch(function() { return null; })
             ]);
 
-            // Server returns direct arrays/objects (not wrapped)
-            if (vehiclesRes && Array.isArray(vehiclesRes)) this.set(this.KEYS.VEHICLES, vehiclesRes);
-            if (mileageRes && Array.isArray(mileageRes)) this.set(this.KEYS.MILEAGE_LOGS, mileageRes);
-            if (alertsRes && Array.isArray(alertsRes)) this.set(this.KEYS.ALERTS, alertsRes);
-            if (activityRes && Array.isArray(activityRes)) this.set(this.KEYS.ACTIVITY, activityRes);
+            // Transform vehicles from Prisma format to frontend format
+            if (vehiclesRes && Array.isArray(vehiclesRes)) {
+                const transformed = vehiclesRes.map(v => {
+                    const statusMap = { 'ACTIVE': 'active', 'NEAR_LIMIT': 'active', 'LIMIT_EXCEEDED': 'active' };
+                    return {
+                        id: v.fleet_number || v.registration_number || v.id,
+                        _dbId: v.id,
+                        registration: v.registration_number || '',
+                        type: v.vehicle_type || 'Sedan',
+                        driver: v.assigned_driver ? v.assigned_driver.name : '',
+                        mileage: v.current_mileage || 0,
+                        status: statusMap[v.status] || 'active',
+                        mileageLimit: v.mileage_limit || 5000,
+                        registrationDate: v.road_worthy_start ? v.road_worthy_start.split('T')[0] : '',
+                        registrationExpiry: v.road_worthy_expiry ? v.road_worthy_expiry.split('T')[0] : '',
+                        insuranceDate: v.insurance_start ? v.insurance_start.split('T')[0] : '',
+                        insuranceExpiry: v.insurance_expiry ? v.insurance_expiry.split('T')[0] : '',
+                        createdAt: v.created_at || '',
+                        updatedAt: v.updated_at || '',
+                        warningAlertSent: v.status === 'NEAR_LIMIT' || v.status === 'LIMIT_EXCEEDED',
+                        criticalAlertSent: v.status === 'LIMIT_EXCEEDED',
+                    };
+                });
+                this.set(this.KEYS.VEHICLES, transformed);
+            }
+
+            // Mileage logs are already transformed by the mileage route
+            if (mileageRes && Array.isArray(mileageRes)) {
+                this.set(this.KEYS.MILEAGE_LOGS, mileageRes);
+            }
+
+            // Alerts: backend returns { alerts, total, ... } or a flat array
+            if (alertsRes) {
+                let alerts = Array.isArray(alertsRes) ? alertsRes : (alertsRes.alerts || []);
+                const transformedAlerts = alerts.map(a => ({
+                    id: a.id,
+                    vehicleId: a.vehicle ? (a.vehicle.fleet_number || a.vehicle.registration_number || a.vehicle_id) : a.vehicle_id,
+                    type: a.alert_type === 'LIMIT_EXCEEDED' ? 'critical' : (a.alert_type === 'NEAR_LIMIT' ? 'warning' : (a.type || 'info')),
+                    title: a.title || (a.alert_type === 'LIMIT_EXCEEDED' ? 'Mileage Limit Exceeded' : 'Mileage Warning'),
+                    message: a.message || '',
+                    timestamp: a.triggered_at || a.timestamp || a.created_at || '',
+                    read: a.acknowledged || a.read || false,
+                }));
+                this.set(this.KEYS.ALERTS, transformedAlerts);
+            }
+
+            // Activity - may not exist as an API
+            try {
+                var activityRes = await ApiClient.getActivity();
+                if (activityRes && Array.isArray(activityRes)) this.set(this.KEYS.ACTIVITY, activityRes);
+            } catch (e) { /* No activity endpoint - that's fine */ }
+
+            // Settings
             if (settingsRes && typeof settingsRes === 'object' && !Array.isArray(settingsRes)) {
                 const current = this.getSettings();
                 this.set(this.KEYS.SETTINGS, { ...current, ...settingsRes });

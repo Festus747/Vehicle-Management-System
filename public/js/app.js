@@ -157,6 +157,9 @@ const App = {
             var result = await Auth.login(email, password);
             if (result.success) {
                 if (errorDiv) { errorDiv.classList.add('hidden'); errorDiv.textContent = ''; }
+                // Clear login fields
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
                 UI.showApp();
                 UI.showToast('success', 'Welcome', 'Logged in as ' + result.user.name);
                 // Sync data from server first, then refresh UI

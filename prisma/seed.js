@@ -73,10 +73,10 @@ async function main() {
   const drivers = await prisma.user.findMany({ where: { role: 'DRIVER' } });
 
   const vehicles = [
-    { registration_number: 'GR-1234-22', driver_email: 'kwame@ghanagas.com' },
-    { registration_number: 'GR-5678-22', driver_email: 'ama@ghanagas.com' },
-    { registration_number: 'GR-9012-23', driver_email: null },
-    { registration_number: 'GR-3456-23', driver_email: null },
+    { registration_number: 'GR-1234-22', fleet_number: 'VH-001', vehicle_type: 'Sedan', driver_email: 'kwame@ghanagas.com' },
+    { registration_number: 'GR-5678-22', fleet_number: 'VH-002', vehicle_type: 'SUV', driver_email: 'ama@ghanagas.com' },
+    { registration_number: 'GR-9012-23', fleet_number: 'VH-003', vehicle_type: 'Pickup', driver_email: null },
+    { registration_number: 'GR-3456-23', fleet_number: 'VH-004', vehicle_type: 'Van', driver_email: null },
   ];
 
   for (const v of vehicles) {
@@ -91,6 +91,8 @@ async function main() {
       const vehicle = await prisma.vehicle.create({
         data: {
           registration_number: v.registration_number,
+          fleet_number: v.fleet_number || null,
+          vehicle_type: v.vehicle_type || null,
           assigned_driver_id: driver?.id || null,
           mileage_limit: 5000,
         },

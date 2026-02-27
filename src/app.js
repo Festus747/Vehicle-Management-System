@@ -10,6 +10,7 @@ const alertRoutes = require('./routes/alerts');
 const reportRoutes = require('./routes/reports');
 const maintenanceRoutes = require('./routes/maintenance');
 const backupRoutes = require('./routes/backup');
+const mileageRoutes = require('./routes/mileage');
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use('/api/alerts', alertRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/backup', backupRoutes);
+app.use('/api/mileage', mileageRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

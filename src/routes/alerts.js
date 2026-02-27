@@ -37,4 +37,34 @@ router.patch('/:id/acknowledge', authenticate, async (req, res, next) => {
   }
 });
 
+/**
+ * PUT /alerts/:id/read
+ * Frontend calls this to mark an alert as read.
+ */
+router.put('/:id/read', authenticate, async (req, res, next) => {
+  try {
+    const alert = await alertService.acknowledgeAlert(req.params.id);
+    res.json({ success: true, alert });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * PUT /alerts/read-all
+ * Mark all alerts as read/acknowledged.
+ */
+router.put('/read-all', authenticate, async (req, res, next) => {
+  try {
+    const prisma = require('../lib/prisma');
+    await prisma.alert.updateMany({
+      where: { acknowledged: false },
+      data: { acknowledged: true },
+    });
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

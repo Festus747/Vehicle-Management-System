@@ -2,8 +2,7 @@ const express = require('express');
 const maintenanceService = require('../services/maintenance.service');
 const { authenticate } = require('../middleware/auth');
 const { authorize } = require('../middleware/rbac');
-const { validate } = require('../middleware/validate');
-const { validateCreateMaintenance } = require('../validators/maintenance');
+const prisma = require('../lib/prisma');
 
 const router = express.Router();
 
@@ -42,25 +41,35 @@ router.get('/:id', authenticate, async (req, res, next) => {
 /**
  * POST /maintenance
  * All authenticated users — create maintenance record.
+ * Accepts frontend format: { vehicleId, artisanName, companyName, contactNumber,
+ * maintenanceDate, repairWork, cost, notes, resetMileage }
  */
 router.post(
   '/',
   authenticate,
-  validate(validateCreateMaintenance),
   async (req, res, next) => {
     try {
-      const { vehicle_id, description, mileage_at_service, service_date } = req.body;
-      const record = await maintenanceService.createMaintenanceRecord({
-        vehicleId: vehicle_id,
-        description,
-        mileage_at_service,
-        service_date,
-      });
+      // Add submitted_by from authenticated user
+      const data = { ...req.body, submittedBy: req.user.name || req.user.email };
+      const record = await maintenanceService.createMaintenanceRecord(data);
       res.status(201).json(record);
     } catch (err) {
       next(err);
     }
   }
 );
+
+/**
+ * DELETE /maintenance/:id
+ * Admin only — delete a maintenance record.
+ */
+router.delete('/:id', authenticate, authorize('ADMIN', 'MANAGER'), async (req, res, next) => {
+  try {
+    await prisma.maintenanceRecord.delete({ where: { id: req.params.id } });
+    res.json({ success: true, message: 'Maintenance record deleted.' });
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router;

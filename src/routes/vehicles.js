@@ -12,12 +12,12 @@ const router = express.Router();
 /**
  * POST /vehicles
  * Admin/Manager only — create a new vehicle.
+ * Accepts frontend format: { id (fleet_number), registration, type, driver, mileage, status, ... }
  */
 router.post(
   '/',
   authenticate,
   authorize('ADMIN', 'MANAGER'),
-  validate(validateCreateVehicle),
   async (req, res, next) => {
     try {
       const vehicle = await vehicleService.createVehicle(req.body);
@@ -63,7 +63,24 @@ router.patch(
   '/:id',
   authenticate,
   authorize('ADMIN', 'MANAGER'),
-  validate(validateUpdateVehicle),
+  async (req, res, next) => {
+    try {
+      const vehicle = await vehicleService.updateVehicle(req.params.id, req.body);
+      res.json(vehicle);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * PUT /vehicles/:id
+ * Admin/Manager only — update vehicle (frontend uses PUT).
+ */
+router.put(
+  '/:id',
+  authenticate,
+  authorize('ADMIN', 'MANAGER'),
   async (req, res, next) => {
     try {
       const vehicle = await vehicleService.updateVehicle(req.params.id, req.body);

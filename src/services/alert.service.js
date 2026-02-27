@@ -18,7 +18,7 @@ async function getAlerts({ vehicleId, acknowledged, page = 1, limit = 50 } = {})
       take: limit,
       include: {
         vehicle: {
-          select: { id: true, registration_number: true, status: true },
+          select: { id: true, registration_number: true, fleet_number: true, status: true },
         },
       },
     }),

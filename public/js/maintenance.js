@@ -96,9 +96,23 @@ const MaintenanceManager = {
 
         try {
             var result = await ApiClient.getMaintenanceLogs();
-            if (result && Array.isArray(result)) {
-                this.logs = result;
-            }
+            var records = Array.isArray(result) ? result : (result && result.records ? result.records : []);
+            // Transform from Prisma format to frontend format
+            this.logs = records.map(function(r) {
+                return {
+                    id: r.id,
+                    vehicleId: r.vehicle ? (r.vehicle.fleet_number || r.vehicle.registration_number) : r.vehicle_id,
+                    artisanName: r.artisan_name || r.artisanName || '',
+                    companyName: r.company_name || r.companyName || '',
+                    contactNumber: r.contact_number || r.contactNumber || '',
+                    repairWork: r.repair_work || r.repairWork || r.description || '',
+                    cost: r.cost || 0,
+                    notes: r.notes || '',
+                    maintenanceDate: r.service_date || r.maintenanceDate || r.created_at || '',
+                    submittedBy: r.submitted_by || r.submittedBy || '',
+                    resetMileage: r.reset_mileage || r.resetMileage || false,
+                };
+            });
         } catch (err) {
             console.warn('[Maintenance] Failed to fetch logs:', err.message);
         }

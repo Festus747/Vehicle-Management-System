@@ -63,6 +63,7 @@ model User {
 /// Company vehicle tracked by the system
 model Vehicle {
   id                    String        @id @default(uuid()) @db.Uuid
+  fleet_number          String?       @unique @db.VarChar(50)
   registration_number   String        @unique @db.VarChar(50)
   vehicle_type          String?       @db.VarChar(50)
   assigned_driver_id    String?       @unique @db.Uuid
@@ -131,6 +132,14 @@ model MaintenanceRecord {
   id                 String   @id @default(uuid()) @db.Uuid
   vehicle_id         String   @db.Uuid
   description        String   @db.Text
+  artisan_name       String?  @db.VarChar(255)
+  company_name       String?  @db.VarChar(255)
+  contact_number     String?  @db.VarChar(100)
+  repair_work        String?  @db.Text
+  cost               Float?
+  notes              String?  @db.Text
+  submitted_by       String?  @db.VarChar(255)
+  reset_mileage      Boolean  @default(false)
   mileage_at_service Float
   service_date       DateTime @db.Date
   created_at         DateTime @default(now())
