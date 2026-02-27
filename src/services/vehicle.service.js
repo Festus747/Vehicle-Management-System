@@ -14,6 +14,14 @@ async function createVehicle(data) {
     if (driverUser) driverId = driverUser.id;
   }
 
+  // If assigning a driver, unassign them from any previous vehicle first
+  if (driverId) {
+    await prisma.vehicle.updateMany({
+      where: { assigned_driver_id: driverId },
+      data: { assigned_driver_id: null },
+    });
+  }
+
   const createData = {
     registration_number: data.registration_number || data.registration,
     fleet_number: data.fleet_number || data.id || null,
@@ -124,6 +132,17 @@ async function updateVehicle(id, data) {
     } else {
       updateData.assigned_driver_id = null; // unassign if empty
     }
+  }
+
+  // If assigning a driver, unassign them from any other vehicle first (unique constraint)
+  if (updateData.assigned_driver_id) {
+    await prisma.vehicle.updateMany({
+      where: {
+        assigned_driver_id: updateData.assigned_driver_id,
+        id: { not: dbId },
+      },
+      data: { assigned_driver_id: null },
+    });
   }
   if (data.mileage_limit !== undefined) updateData.mileage_limit = Number(data.mileage_limit);
   if (data.vehicle_type !== undefined) updateData.vehicle_type = data.vehicle_type;

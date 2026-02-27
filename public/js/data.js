@@ -152,10 +152,12 @@ const DataStore = {
         this.set(this.KEYS.VEHICLES, vehicles);
         this.addActivity('vehicle', 'Vehicle ' + vehicle.id + ' (' + vehicle.registration + ') registered', 'fa-car', vehicle.id);
 
-        // Async API call
-        ApiClient.createVehicle(vehicle).catch(err => {
+        // Async API call — then sync to get server-resolved driver info
+        ApiClient.createVehicle(vehicle).then(() => {
+            this.syncFromServer();
+        }).catch(err => {
             console.warn('[DataStore] API create vehicle failed:', err.message);
-            ApiClient.queueOfflineRequest('/api/vehicles', { method: 'POST', body: JSON.stringify(vehicle) });
+            UI.showToast('warning', 'Sync Warning', 'Vehicle saved locally but server sync failed: ' + err.message);
         });
 
         return { success: true };
@@ -168,8 +170,12 @@ const DataStore = {
         vehicles[idx] = { ...vehicles[idx], ...updates, updatedAt: new Date().toISOString() };
         this.set(this.KEYS.VEHICLES, vehicles);
 
-        ApiClient.updateVehicle(vehicleId, updates).catch(err => {
+        // Async API call — then sync to get server-resolved driver info
+        ApiClient.updateVehicle(vehicleId, updates).then(() => {
+            this.syncFromServer();
+        }).catch(err => {
             console.warn('[DataStore] API update vehicle failed:', err.message);
+            UI.showToast('warning', 'Sync Warning', 'Vehicle updated locally but server sync failed: ' + err.message);
         });
 
         return { success: true };

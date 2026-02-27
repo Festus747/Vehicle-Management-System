@@ -39,11 +39,14 @@ const VehicleManager = {
         });
     },
 
-    openVehicleModal(vehicleId = null) {
+    async openVehicleModal(vehicleId = null) {
         const modal = document.getElementById('modal-vehicle');
         const title = document.getElementById('modal-vehicle-title');
         const form = document.getElementById('vehicle-form');
         form.reset();
+
+        // Populate driver dropdown with approved drivers from server
+        await this.populateDriverDropdown();
 
         if (vehicleId) {
             const vehicle = DataStore.getVehicle(vehicleId);
@@ -74,6 +77,24 @@ const VehicleManager = {
         }
 
         modal.classList.remove('hidden');
+    },
+
+    async populateDriverDropdown() {
+        const select = document.getElementById('v-driver');
+        select.innerHTML = '<option value="">-- Select Driver --</option>';
+        try {
+            const users = await ApiClient.getUsers();
+            const drivers = (users || []).filter(u => u.approved !== false);
+            drivers.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.name;
+                opt.textContent = u.name + ' (' + u.role + ')';
+                select.appendChild(opt);
+            });
+        } catch (err) {
+            console.warn('[VehicleManager] Could not load drivers:', err.message);
+            // Fallback: allow free text if users API fails
+        }
     },
 
     closeVehicleModal() {

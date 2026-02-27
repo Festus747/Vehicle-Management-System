@@ -1,5 +1,5 @@
 // Service Worker for Vehicle Mileage Tracker PWA
-const CACHE_NAME = 'vmt-cache-v5';
+const CACHE_NAME = 'vmt-cache-v6';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
