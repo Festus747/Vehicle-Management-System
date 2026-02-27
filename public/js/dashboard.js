@@ -51,8 +51,11 @@ const Dashboard = {
                 labels: vehicles.map(v => v.id),
                 datasets: [
                     {
-                        label: 'Current Mileage',
-                        data: vehicles.map(v => v.mileage || 0),
+                        label: 'Cycle Mileage',
+                        data: vehicles.map(v => {
+                            const cycle = DataStore.getVehicleCycleInfo(v);
+                            return cycle.cycleMileage;
+                        }),
                         backgroundColor: vehicles.map(v => {
                             const status = DataStore.getVehicleStatus(v);
                             return status === 'normal' ? 'rgba(78, 201, 176, 0.7)' :
@@ -77,8 +80,11 @@ const Dashboard = {
                     tooltip: {
                         callbacks: {
                             afterBody: function (context) {
-                                const remaining = maxMileage - context[0].raw;
-                                return `Remaining: ${remaining > 0 ? remaining : 0} miles`;
+                                const vehicle = vehicles[context[0].dataIndex];
+                                const cycle = DataStore.getVehicleCycleInfo(vehicle);
+                                return 'Remaining: ' + (cycle.remaining > 0 ? cycle.remaining : 0) + ' miles' +
+                                    (cycle.cycleNumber > 1 ? '\nCycle: ' + cycle.cycleNumber : '') +
+                                    '\nTotal Odometer: ' + cycle.totalMileage.toLocaleString() + ' miles';
                             }
                         }
                     }
@@ -204,9 +210,10 @@ const Dashboard = {
 
         tbody.innerHTML = vehicles.map(v => {
             const status = DataStore.getVehicleStatus(v);
-            const remaining = maxMileage - (v.mileage || 0);
-            const pct = Math.min(((v.mileage || 0) / maxMileage) * 100, 100);
+            const cycle = DataStore.getVehicleCycleInfo(v);
+            const pct = Math.min((cycle.cycleMileage / cycle.maxMileage) * 100, 100);
             const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+            const cycleLabel = cycle.cycleNumber > 1 ? ' <span style="font-size:10px;color:var(--text-muted)">(Cycle ' + cycle.cycleNumber + ')</span>' : '';
 
             return `
                 <tr>
@@ -216,13 +223,13 @@ const Dashboard = {
                     <td>${v.driver || '-'}</td>
                     <td>
                         <div class="mileage-bar-inline">
-                            <span>${(v.mileage || 0).toLocaleString()}</span>
+                            <span>${cycle.cycleMileage.toLocaleString()} / ${cycle.maxMileage.toLocaleString()}${cycleLabel}</span>
                             <div class="mileage-bar-bg" style="width:60px">
                                 <div class="mileage-bar-fill" style="width:${pct}%; background:var(--status-${status})"></div>
                             </div>
                         </div>
                     </td>
-                    <td style="color:var(--status-${status})">${remaining > 0 ? remaining.toLocaleString() : 'OVER'}</td>
+                    <td style="color:var(--status-${status})">${cycle.remaining > 0 ? cycle.remaining.toLocaleString() : 'LIMIT'}</td>
                     <td><span class="status-badge status-${status}">${statusLabel}</span></td>
                 </tr>`;
         }).join('');

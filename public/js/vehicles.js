@@ -182,10 +182,11 @@ const VehicleManager = {
 
         tbody.innerHTML = vehicles.map(v => {
             const status = DataStore.getVehicleStatus(v);
-            const remaining = maxMileage - (v.mileage || 0);
-            const pct = Math.min(((v.mileage || 0) / maxMileage) * 100, 100);
+            const cycle = DataStore.getVehicleCycleInfo(v);
+            const pct = Math.min((cycle.cycleMileage / cycle.maxMileage) * 100, 100);
             const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
             const typeIcon = this.getTypeIcon(v.type);
+            const cycleLabel = cycle.cycleNumber > 1 ? ' <span style="font-size:10px;color:var(--text-muted)">(C' + cycle.cycleNumber + ')</span>' : '';
 
             return `
                 <tr>
@@ -195,13 +196,13 @@ const VehicleManager = {
                     <td>${v.driver || '<span style="color:var(--text-muted)">Unassigned</span>'}</td>
                     <td>
                         <div class="mileage-bar-inline">
-                            <span>${(v.mileage || 0).toLocaleString()}</span>
+                            <span>${cycle.cycleMileage.toLocaleString()}${cycleLabel}</span>
                             <div class="mileage-bar-bg" style="width:80px">
                                 <div class="mileage-bar-fill" style="width:${pct}%; background:var(--status-${status})"></div>
                             </div>
                         </div>
                     </td>
-                    <td>${remaining > 0 ? remaining.toLocaleString() + ' mi' : '<span style="color:var(--status-exceeded)">EXCEEDED</span>'}</td>
+                    <td>${cycle.remaining > 0 ? cycle.remaining.toLocaleString() + ' mi' : '<span style="color:var(--status-exceeded)">LIMIT</span>'}</td>
                     <td><span class="status-badge status-${status}"><i class="fas ${status === 'normal' ? 'fa-check-circle' : status === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle'}"></i> ${statusLabel}</span></td>
                     <td class="admin-only">
                         <div class="action-btn-group">
@@ -226,9 +227,9 @@ const VehicleManager = {
 
         const settings = DataStore.getSettings();
         const maxMileage = settings.maxMileage || MAX_MILEAGE;
-        const remaining = maxMileage - (vehicle.mileage || 0);
+        const cycle = DataStore.getVehicleCycleInfo(vehicle);
         const status = DataStore.getVehicleStatus(vehicle);
-        const pct = Math.min(((vehicle.mileage || 0) / maxMileage) * 100, 100);
+        const pct = Math.min((cycle.cycleMileage / cycle.maxMileage) * 100, 100);
         const logs = DataStore.getMileageLogs(vehicleId);
 
         const content = document.getElementById('vehicle-details-content');
@@ -244,10 +245,11 @@ const VehicleManager = {
                 </div>
                 <div class="detail-section">
                     <h4><i class="fas fa-tachometer-alt"></i> Mileage Information</h4>
-                    <div class="detail-row"><span class="detail-label">Current Mileage</span><span class="detail-value">${(vehicle.mileage || 0).toLocaleString()} miles</span></div>
-                    <div class="detail-row"><span class="detail-label">Maximum Limit</span><span class="detail-value">${maxMileage.toLocaleString()} miles</span></div>
-                    <div class="detail-row"><span class="detail-label">Remaining</span><span class="detail-value" style="color:var(--status-${status})">${remaining > 0 ? remaining.toLocaleString() + ' miles' : 'EXCEEDED by ' + Math.abs(remaining) + ' miles'}</span></div>
-                    <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value"><span class="status-badge status-${status}">${status.toUpperCase()}</span></span></div>
+                    <div class="detail-row"><span class="detail-label">Total Odometer</span><span class="detail-value">${(vehicle.mileage || 0).toLocaleString()} miles</span></div>
+                    <div class="detail-row"><span class="detail-label">Cycle Mileage</span><span class="detail-value">${cycle.cycleMileage.toLocaleString()} / ${cycle.maxMileage.toLocaleString()} miles</span></div>
+                    <div class="detail-row"><span class="detail-label">Cycle Remaining</span><span class="detail-value" style="color:var(--status-${status})">${cycle.remaining > 0 ? cycle.remaining.toLocaleString() + ' miles' : 'LIMIT REACHED'}</span></div>
+                    <div class="detail-row"><span class="detail-label">Cycle #</span><span class="detail-value">${cycle.cycleNumber}</span></div>
+                    <div class="detail-row"><span class="detail-label">Mileage Status</span><span class="detail-value"><span class="status-badge status-${status}">${status.toUpperCase()}</span></span></div>
                     <div class="detail-row"><span class="detail-label">Assigned Driver</span><span class="detail-value">${vehicle.driver || 'Unassigned'}</span></div>
                 </div>
             </div>
@@ -259,7 +261,7 @@ const VehicleManager = {
                 </div>
                 <div class="gauge-labels">
                     <span>0 miles</span>
-                    <span>${maxMileage.toLocaleString()} miles</span>
+                    <span>${maxMileage.toLocaleString()} miles (Cycle ${cycle.cycleNumber})</span>
                 </div>
             </div>
             <div class="vehicle-history-section">

@@ -69,6 +69,7 @@ const DataStore = {
                         insuranceExpiry: v.insurance_expiry ? v.insurance_expiry.split('T')[0] : '',
                         createdAt: v.created_at || '',
                         updatedAt: v.updated_at || '',
+                        // Cycle-aware alert flags
                         warningAlertSent: v.status === 'NEAR_LIMIT' || v.status === 'LIMIT_EXCEEDED',
                         criticalAlertSent: v.status === 'LIMIT_EXCEEDED',
                     };
@@ -241,18 +242,38 @@ const DataStore = {
         const settings = this.getSettings();
         const maxMileage = settings.maxMileage || MAX_MILEAGE;
         const warnThreshold = settings.warningThreshold || WARNING_THRESHOLD;
-        const remaining = maxMileage - newMileage;
+
+        // Cycle-based thresholds
+        const prevCycle = Math.floor(prevMileage / maxMileage);
+        const newCycle = Math.floor(newMileage / maxMileage);
+        const cycleMileage = newMileage % maxMileage;
+        const effectiveMileage = (newMileage > 0 && cycleMileage === 0) ? maxMileage : cycleMileage;
+        const remaining = maxMileage - effectiveMileage;
+
+        // Reset alert flags when entering a new cycle
+        if (newCycle > prevCycle && prevMileage > 0) {
+            this.updateVehicle(vehicleId, { warningAlertSent: false, criticalAlertSent: false }, { skipApi: true });
+            // Re-read vehicle after reset
+            vehicle = this.getVehicle(vehicleId);
+            const cycleNum = newCycle + 1;
+            AlertsManager.createAlert(vehicleId, 'info',
+                'Cycle ' + cycleNum + ' started for Vehicle ' + vehicleId,
+                'Vehicle has entered mileage cycle ' + cycleNum + '. Total odometer: ' + newMileage + ' miles. New cycle limit: ' + maxMileage + ' miles.'
+            );
+        }
 
         if (remaining <= 0 && !vehicle.criticalAlertSent) {
+            const cycleNum = newCycle + 1;
             AlertsManager.createAlert(vehicleId, 'critical',
-                'CRITICAL: Vehicle ' + vehicleId + ' has exceeded the mileage limit!',
-                'Current mileage: ' + newMileage + ' miles. Limit: ' + maxMileage + ' miles. Exceeded by ' + Math.abs(remaining) + ' miles.'
+                'CRITICAL: Vehicle ' + vehicleId + ' has reached the ' + maxMileage + ' mile cap! (Cycle ' + cycleNum + ')',
+                'Total odometer: ' + newMileage + ' miles. Cycle ' + cycleNum + ' limit of ' + maxMileage + ' miles reached. Schedule maintenance service.'
             );
             this.updateVehicle(vehicleId, { criticalAlertSent: true }, { skipApi: true });
         } else if (remaining <= warnThreshold && remaining > 0 && !vehicle.warningAlertSent) {
+            const cycleNum = newCycle + 1;
             AlertsManager.createAlert(vehicleId, 'warning',
-                'WARNING: Vehicle ' + vehicleId + ' is approaching mileage limit',
-                'Current mileage: ' + newMileage + ' miles. Only ' + remaining + ' miles remaining.'
+                'WARNING: Vehicle ' + vehicleId + ' approaching ' + maxMileage + ' mile cap (Cycle ' + cycleNum + ')',
+                'Total odometer: ' + newMileage + ' miles. Only ' + remaining + ' miles remaining in cycle ' + cycleNum + '.'
             );
             this.updateVehicle(vehicleId, { warningAlertSent: true }, { skipApi: true });
         }
@@ -340,10 +361,27 @@ const DataStore = {
         const settings = this.getSettings();
         const maxMileage = settings.maxMileage || MAX_MILEAGE;
         const warnThreshold = settings.warningThreshold || WARNING_THRESHOLD;
-        const remaining = maxMileage - (vehicle.mileage || 0);
+        const totalMileage = vehicle.mileage || 0;
+        // Cycle-based: calculate position within the current cycle
+        const cycleMileage = totalMileage % maxMileage;
+        // If exactly at a cycle boundary (e.g. 5000, 10000), treat as exceeded
+        const effectiveMileage = (totalMileage > 0 && cycleMileage === 0) ? maxMileage : cycleMileage;
+        const remaining = maxMileage - effectiveMileage;
         if (remaining <= 0) return 'exceeded';
         if (remaining <= warnThreshold) return 'warning';
         return 'normal';
+    },
+
+    // Get cycle info for a vehicle
+    getVehicleCycleInfo(vehicle) {
+        const settings = this.getSettings();
+        const maxMileage = settings.maxMileage || MAX_MILEAGE;
+        const totalMileage = vehicle.mileage || 0;
+        const cycleNumber = Math.floor(totalMileage / maxMileage) + 1;
+        const cycleMileage = totalMileage % maxMileage;
+        const effectiveMileage = (totalMileage > 0 && cycleMileage === 0) ? maxMileage : cycleMileage;
+        const remaining = maxMileage - effectiveMileage;
+        return { cycleNumber, cycleMileage: effectiveMileage, remaining: Math.max(0, remaining), totalMileage, maxMileage };
     },
 
     getStats() {
