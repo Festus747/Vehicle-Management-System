@@ -77,7 +77,7 @@ const MaintenanceManager = {
             if (result && (result.success || result.id)) {
                 UI.showToast('success', 'Maintenance Logged', 'Maintenance record has been saved');
                 if (resetMileage) {
-                    UI.showToast('info', 'Service Reset', 'Vehicle mileage counter has been reset. Status cleared to Active.');
+                    UI.showToast('info', 'Service Reset', 'Service cycle counter reset to 0. Total odometer unchanged. Status cleared to Active.');
                 }
                 this.closeModal();
                 this.render();

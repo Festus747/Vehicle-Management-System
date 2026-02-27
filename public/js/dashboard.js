@@ -227,6 +227,7 @@ const Dashboard = {
                                 <div class="mileage-bar-fill" style="width:${pct}%; background:var(--status-${status})"></div>
                             </div>
                         </div>
+                        <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Odometer: ${cycle.totalMileage.toLocaleString()} mi</div>
                     </td>
                     <td style="color:var(--status-${status})">${cycle.remaining > 0 ? cycle.remaining.toLocaleString() : '<strong>SERVICE DUE</strong>'}</td>
                     <td><span class="status-badge status-${status}">${statusLabel}</span></td>

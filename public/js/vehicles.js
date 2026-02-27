@@ -200,6 +200,7 @@ const VehicleManager = {
                                 <div class="mileage-bar-fill" style="width:${pct}%; background:var(--status-${status})"></div>
                             </div>
                         </div>
+                        <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Odometer: ${cycle.totalMileage.toLocaleString()} mi</div>
                     </td>
                     <td>${cycle.remaining > 0 ? cycle.remaining.toLocaleString() + ' mi' : '<span style="color:var(--status-exceeded)"><strong>SERVICE DUE</strong></span>'}</td>
                     <td><span class="status-badge status-${status}"><i class="fas ${status === 'normal' ? 'fa-check-circle' : status === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle'}"></i> ${statusLabel}</span></td>
