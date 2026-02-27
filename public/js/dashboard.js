@@ -51,7 +51,7 @@ const Dashboard = {
                 labels: vehicles.map(v => v.id),
                 datasets: [
                     {
-                        label: 'Cycle Mileage',
+                        label: 'Mileage Since Service',
                         data: vehicles.map(v => {
                             const cycle = DataStore.getVehicleCycleInfo(v);
                             return cycle.cycleMileage;
@@ -83,8 +83,8 @@ const Dashboard = {
                                 const vehicle = vehicles[context[0].dataIndex];
                                 const cycle = DataStore.getVehicleCycleInfo(vehicle);
                                 return 'Remaining: ' + (cycle.remaining > 0 ? cycle.remaining : 0) + ' miles' +
-                                    (cycle.cycleNumber > 1 ? '\nCycle: ' + cycle.cycleNumber : '') +
-                                    '\nTotal Odometer: ' + cycle.totalMileage.toLocaleString() + ' miles';
+                                    '\nTotal Odometer: ' + cycle.totalMileage.toLocaleString() + ' miles' +
+                                    (cycle.lastService > 0 ? '\nLast Service At: ' + cycle.lastService.toLocaleString() + ' miles' : '');
                             }
                         }
                     }
@@ -213,7 +213,6 @@ const Dashboard = {
             const cycle = DataStore.getVehicleCycleInfo(v);
             const pct = Math.min((cycle.cycleMileage / cycle.maxMileage) * 100, 100);
             const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
-            const cycleLabel = cycle.cycleNumber > 1 ? ' <span style="font-size:10px;color:var(--text-muted)">(Cycle ' + cycle.cycleNumber + ')</span>' : '';
 
             return `
                 <tr>
@@ -223,13 +222,13 @@ const Dashboard = {
                     <td>${v.driver || '-'}</td>
                     <td>
                         <div class="mileage-bar-inline">
-                            <span>${cycle.cycleMileage.toLocaleString()} / ${cycle.maxMileage.toLocaleString()}${cycleLabel}</span>
+                            <span>${cycle.cycleMileage.toLocaleString()} / ${cycle.maxMileage.toLocaleString()}</span>
                             <div class="mileage-bar-bg" style="width:60px">
                                 <div class="mileage-bar-fill" style="width:${pct}%; background:var(--status-${status})"></div>
                             </div>
                         </div>
                     </td>
-                    <td style="color:var(--status-${status})">${cycle.remaining > 0 ? cycle.remaining.toLocaleString() : 'LIMIT'}</td>
+                    <td style="color:var(--status-${status})">${cycle.remaining > 0 ? cycle.remaining.toLocaleString() : '<strong>SERVICE DUE</strong>'}</td>
                     <td><span class="status-badge status-${status}">${statusLabel}</span></td>
                 </tr>`;
         }).join('');

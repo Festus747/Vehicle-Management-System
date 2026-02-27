@@ -66,12 +66,12 @@ const Reports = {
                 break;
             case 'driver-usage':
                 data = this.getDriverUsageData(options.driverFilter);
-                headers = ['Driver', 'Vehicle ID', 'Registration', 'Vehicle Type', 'Total Mileage', 'Cycle Mileage', 'Limit', 'Cycle Remaining', 'Cycle #', 'Status'];
+                headers = ['Driver', 'Vehicle ID', 'Registration', 'Vehicle Type', 'Total Mileage', 'Since Service', 'Limit', 'Remaining', 'Status'];
                 filename = options.driverFilter ? 'driver_usage_' + options.driverFilter.replace(/\s+/g, '_') : 'driver_usage_all';
                 break;
             case 'fleet-summary':
                 data = this.getFleetSummaryData();
-                headers = ['Vehicle ID', 'Registration', 'Type', 'Driver', 'Total Mileage', 'Cycle Mileage', 'Cycle Remaining', 'Cycle #', 'Status', 'Active'];
+                headers = ['Vehicle ID', 'Registration', 'Type', 'Driver', 'Total Mileage', 'Since Service', 'Remaining', 'Status', 'Active'];
                 filename = 'fleet_summary';
                 break;
             default:
@@ -191,8 +191,7 @@ const Reports = {
                 (v.mileage || 0).toLocaleString(),
                 cycle.cycleMileage.toLocaleString(),
                 cycle.maxMileage.toLocaleString(),
-                cycle.remaining > 0 ? cycle.remaining.toLocaleString() : '0',
-                cycle.cycleNumber,
+                cycle.remaining > 0 ? cycle.remaining.toLocaleString() : 'SERVICE DUE',
                 status.toUpperCase()
             ];
         });
@@ -226,8 +225,7 @@ const Reports = {
                 v.driver || 'Unassigned',
                 (v.mileage || 0).toLocaleString(),
                 cycle.cycleMileage.toLocaleString(),
-                cycle.remaining > 0 ? cycle.remaining.toLocaleString() : '0',
-                cycle.cycleNumber,
+                cycle.remaining > 0 ? cycle.remaining.toLocaleString() : 'SERVICE DUE',
                 status.toUpperCase(),
                 v.status === 'active' ? 'Yes' : 'No'
             ];
@@ -342,7 +340,7 @@ summaryBox +
                 ' | <strong>Vehicles:</strong> ' + data.length + '</div>';
         }
         if (reportType === 'fleet-summary') {
-            var active = data.filter(function(r) { return r[9] === 'Yes'; }).length;
+            var active = data.filter(function(r) { return r[8] === 'Yes'; }).length;
             return '<div class="summary-box"><strong>Total Vehicles:</strong> ' + data.length +
                 ' | <strong>Active:</strong> ' + active +
                 ' | <strong>Inactive:</strong> ' + (data.length - active) + '</div>';

@@ -42,11 +42,15 @@ async function createMaintenanceRecord(data) {
     },
   });
 
-  // Reset mileage if requested
+  // Reset mileage cycle if requested — sets last_service_mileage to current odometer
+  // The odometer (current_mileage) never resets; only the service baseline moves forward
   if (data.resetMileage || data.reset_mileage) {
     await prisma.vehicle.update({
       where: { id: vehicle.id },
-      data: { current_mileage: 0, status: 'ACTIVE' },
+      data: {
+        last_service_mileage: vehicle.current_mileage,
+        status: 'ACTIVE',
+      },
     });
   }
 

@@ -69,6 +69,7 @@ model Vehicle {
   assigned_driver_id    String?       @db.Uuid
   mileage_limit         Int           @default(5000)
   current_mileage       Float         @default(0)
+  last_service_mileage  Float         @default(0)
   status                VehicleStatus @default(ACTIVE)
   road_worthy_start     DateTime?     @db.Date
   road_worthy_expiry    DateTime?     @db.Date

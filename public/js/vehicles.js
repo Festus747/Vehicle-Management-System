@@ -186,7 +186,6 @@ const VehicleManager = {
             const pct = Math.min((cycle.cycleMileage / cycle.maxMileage) * 100, 100);
             const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
             const typeIcon = this.getTypeIcon(v.type);
-            const cycleLabel = cycle.cycleNumber > 1 ? ' <span style="font-size:10px;color:var(--text-muted)">(C' + cycle.cycleNumber + ')</span>' : '';
 
             return `
                 <tr>
@@ -196,13 +195,13 @@ const VehicleManager = {
                     <td>${v.driver || '<span style="color:var(--text-muted)">Unassigned</span>'}</td>
                     <td>
                         <div class="mileage-bar-inline">
-                            <span>${cycle.cycleMileage.toLocaleString()}${cycleLabel}</span>
+                            <span>${cycle.cycleMileage.toLocaleString()} / ${cycle.maxMileage.toLocaleString()}</span>
                             <div class="mileage-bar-bg" style="width:80px">
                                 <div class="mileage-bar-fill" style="width:${pct}%; background:var(--status-${status})"></div>
                             </div>
                         </div>
                     </td>
-                    <td>${cycle.remaining > 0 ? cycle.remaining.toLocaleString() + ' mi' : '<span style="color:var(--status-exceeded)">LIMIT</span>'}</td>
+                    <td>${cycle.remaining > 0 ? cycle.remaining.toLocaleString() + ' mi' : '<span style="color:var(--status-exceeded)"><strong>SERVICE DUE</strong></span>'}</td>
                     <td><span class="status-badge status-${status}"><i class="fas ${status === 'normal' ? 'fa-check-circle' : status === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle'}"></i> ${statusLabel}</span></td>
                     <td class="admin-only">
                         <div class="action-btn-group">
@@ -246,9 +245,9 @@ const VehicleManager = {
                 <div class="detail-section">
                     <h4><i class="fas fa-tachometer-alt"></i> Mileage Information</h4>
                     <div class="detail-row"><span class="detail-label">Total Odometer</span><span class="detail-value">${(vehicle.mileage || 0).toLocaleString()} miles</span></div>
-                    <div class="detail-row"><span class="detail-label">Cycle Mileage</span><span class="detail-value">${cycle.cycleMileage.toLocaleString()} / ${cycle.maxMileage.toLocaleString()} miles</span></div>
-                    <div class="detail-row"><span class="detail-label">Cycle Remaining</span><span class="detail-value" style="color:var(--status-${status})">${cycle.remaining > 0 ? cycle.remaining.toLocaleString() + ' miles' : 'LIMIT REACHED'}</span></div>
-                    <div class="detail-row"><span class="detail-label">Cycle #</span><span class="detail-value">${cycle.cycleNumber}</span></div>
+                    <div class="detail-row"><span class="detail-label">Since Last Service</span><span class="detail-value">${cycle.cycleMileage.toLocaleString()} / ${cycle.maxMileage.toLocaleString()} miles</span></div>
+                    <div class="detail-row"><span class="detail-label">Remaining</span><span class="detail-value" style="color:var(--status-${status})">${cycle.remaining > 0 ? cycle.remaining.toLocaleString() + ' miles' : 'SERVICE DUE — Log maintenance to reset'}</span></div>
+                    <div class="detail-row"><span class="detail-label">Last Service At</span><span class="detail-value">${cycle.lastService > 0 ? cycle.lastService.toLocaleString() + ' miles' : 'No service recorded'}</span></div>
                     <div class="detail-row"><span class="detail-label">Mileage Status</span><span class="detail-value"><span class="status-badge status-${status}">${status.toUpperCase()}</span></span></div>
                     <div class="detail-row"><span class="detail-label">Assigned Driver</span><span class="detail-value">${vehicle.driver || 'Unassigned'}</span></div>
                 </div>
@@ -260,8 +259,8 @@ const VehicleManager = {
                     </div>
                 </div>
                 <div class="gauge-labels">
-                    <span>0 miles</span>
-                    <span>${maxMileage.toLocaleString()} miles (Cycle ${cycle.cycleNumber})</span>
+                    <span>Last Service</span>
+                    <span>${maxMileage.toLocaleString()} miles</span>
                 </div>
             </div>
             <div class="vehicle-history-section">

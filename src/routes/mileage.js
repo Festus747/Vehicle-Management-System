@@ -122,49 +122,39 @@ router.post('/', authenticate, async (req, res, next) => {
       },
     });
 
-    // Determine new status using cycle-based calculation
+    // Determine new status using maintenance-based cycle
     const limit = vehicle.mileage_limit;
-    const cycleMileage = newMileage % limit;
-    const effectiveMileage = (newMileage > 0 && cycleMileage === 0) ? limit : cycleMileage;
-    const remaining = limit - effectiveMileage;
+    const lastService = vehicle.last_service_mileage || 0;
+    const cycleMileage = newMileage - lastService;
+    const remaining = limit - cycleMileage;
 
     let newStatus = 'ACTIVE';
     if (remaining <= 0) newStatus = 'LIMIT_EXCEEDED';
     else if (remaining <= 200) newStatus = 'NEAR_LIMIT';
 
-    // Update vehicle
+    // Update vehicle mileage and status
     await prisma.vehicle.update({
       where: { id: vehicle.id },
       data: { current_mileage: Number(newMileage), status: newStatus },
     });
 
-    // Detect cycle boundary crossing — alerts should re-fire in each new cycle
-    const prevCycle = Math.floor(vehicle.current_mileage / limit);
-    const newCycle = Math.floor(newMileage / limit);
-    const enteredNewCycle = newCycle > prevCycle && vehicle.current_mileage > 0;
-
-    // Create alerts if thresholds crossed (cycle-aware)
-    if (newStatus === 'LIMIT_EXCEEDED') {
-      // Only create if we just crossed into this cycle's exceeded, or it's a new cycle
-      if (vehicle.status !== 'LIMIT_EXCEEDED' || enteredNewCycle) {
-        await prisma.alert.create({
-          data: {
-            vehicle_id: vehicle.id,
-            alert_type: 'LIMIT_EXCEEDED',
-            message: `Vehicle ${vehicle.fleet_number || vehicle.registration_number} reached ${limit}-mile cap (Cycle ${newCycle + 1}). Total odometer: ${newMileage}. Schedule maintenance.`,
-          },
-        });
-      }
-    } else if (newStatus === 'NEAR_LIMIT') {
-      if (vehicle.status === 'ACTIVE' || enteredNewCycle) {
-        await prisma.alert.create({
-          data: {
-            vehicle_id: vehicle.id,
-            alert_type: 'NEAR_LIMIT',
-            message: `Vehicle ${vehicle.fleet_number || vehicle.registration_number} approaching ${limit}-mile cap (Cycle ${newCycle + 1}). Total odometer: ${newMileage}. Only ${remaining} miles remaining in this cycle.`,
-          },
-        });
-      }
+    // Create alerts if thresholds crossed
+    if (newStatus === 'LIMIT_EXCEEDED' && vehicle.status !== 'LIMIT_EXCEEDED') {
+      await prisma.alert.create({
+        data: {
+          vehicle_id: vehicle.id,
+          alert_type: 'LIMIT_EXCEEDED',
+          message: `Vehicle ${vehicle.fleet_number || vehicle.registration_number} reached ${limit}-mile service cap. Odometer: ${newMileage}. Miles since last service: ${cycleMileage}. Schedule maintenance immediately.`,
+        },
+      });
+    } else if (newStatus === 'NEAR_LIMIT' && vehicle.status === 'ACTIVE') {
+      await prisma.alert.create({
+        data: {
+          vehicle_id: vehicle.id,
+          alert_type: 'NEAR_LIMIT',
+          message: `Vehicle ${vehicle.fleet_number || vehicle.registration_number} approaching ${limit}-mile service cap. Odometer: ${newMileage}. Only ${remaining} miles remaining before maintenance is required.`,
+        },
+      });
     }
 
     logActivity({
