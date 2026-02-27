@@ -16,7 +16,7 @@
     "db:studio": "npx prisma studio",
     "db:reset": "npx prisma migrate reset",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma migrate deploy"
+    "vercel-build": "prisma generate && prisma db push --skip-generate"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
