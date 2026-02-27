@@ -54,7 +54,7 @@ model User {
   updated_at    DateTime @updatedAt
 
   // Relations
-  assigned_vehicle Vehicle?        @relation("AssignedDriver")
+  assigned_vehicles Vehicle[]       @relation("AssignedDriver")
   mileage_records  MileageRecord[] @relation("RecordedBy")
 
   @@map("users")
@@ -66,7 +66,7 @@ model Vehicle {
   fleet_number          String?       @unique @db.VarChar(50)
   registration_number   String        @unique @db.VarChar(50)
   vehicle_type          String?       @db.VarChar(50)
-  assigned_driver_id    String?       @unique @db.Uuid
+  assigned_driver_id    String?       @db.Uuid
   mileage_limit         Int           @default(5000)
   current_mileage       Float         @default(0)
   status                VehicleStatus @default(ACTIVE)

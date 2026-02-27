@@ -341,7 +341,12 @@ const DataStore = {
     },
 
     getStats() {
-        const vehicles = this.getVehicles().filter(v => v.status === 'active');
+        let vehicles = this.getVehicles().filter(v => v.status === 'active');
+        // Filter for driver's vehicles only
+        if (Auth.isDriver()) {
+            const user = Auth.getCurrentUser();
+            if (user) vehicles = vehicles.filter(v => v.driver === user.name);
+        }
         const stats = { total: vehicles.length, normal: 0, warning: 0, exceeded: 0 };
         vehicles.forEach(v => {
             const status = this.getVehicleStatus(v);
