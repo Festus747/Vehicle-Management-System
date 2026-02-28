@@ -258,8 +258,8 @@
     .sidebar {
         position: fixed;
         left: 0;
-        top: 30px;
-        bottom: 22px;
+        top: 0;
+        bottom: 0;
         z-index: 1000;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
@@ -270,7 +270,7 @@
         transform: translateX(0);
     }
 
-    /* Activity bar becomes bottom nav */
+    /* ======== BOTTOM NAV BAR ======== */
     .activity-bar {
         position: fixed;
         bottom: 0;
@@ -284,13 +284,26 @@
         z-index: 1001;
         padding: 0;
         background: var(--bg-activitybar);
+        box-shadow: 0 -2px 12px rgba(0,0,0,0.35);
     }
 
+    /* Fix: HTML uses .activity-icons not .activity-icons-top */
+    .activity-icons,
     .activity-icons-top {
+        display: flex;
         flex-direction: row;
         flex: 1;
-        justify-content: space-around;
         overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        padding: 4px 0;
+    }
+
+    .activity-icons::-webkit-scrollbar,
+    .activity-icons-top::-webkit-scrollbar {
+        display: none;
     }
 
     .activity-icons-bottom {
@@ -300,18 +313,20 @@
     .activity-btn {
         width: auto;
         height: auto;
-        min-width: 48px;
-        padding: 6px 4px;
+        min-width: 56px;
+        padding: 6px 4px 4px;
         flex-direction: column;
         gap: 2px;
         font-size: 16px;
         border-left: none !important;
         border-top: 2px solid transparent;
+        flex-shrink: 0;
     }
 
     .activity-btn.active {
         border-left-color: transparent !important;
         border-top-color: var(--accent-blue);
+        background: rgba(0,122,204,0.1);
     }
 
     .activity-label {
@@ -319,76 +334,62 @@
         font-size: 9px;
         color: var(--text-muted);
         white-space: nowrap;
+        line-height: 1.2;
     }
 
     .activity-btn.active .activity-label {
-        color: var(--text-bright);
+        color: var(--accent-blue);
+        font-weight: 600;
     }
 
-    /* Main layout adjustments */
+    .activity-btn i {
+        font-size: 18px;
+    }
+
+    /* ======== MAIN LAYOUT ======== */
     .main-layout {
-        padding-bottom: 56px;
+        padding-bottom: 60px;
     }
 
-    /* Editor area takes full width */
     .editor-area {
         min-width: 0;
     }
 
-    /* Hide tabs bar on very small screens */
     .tabs-bar {
         display: none;
     }
 
-    /* Panel content padding */
-    .panel-content {
-        padding: 12px;
-    }
-
-    /* Stats row */
-    .stats-row {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    /* Charts */
-    .charts-row {
-        grid-template-columns: 1fr;
-    }
-
-    /* Reports grid */
-    .reports-grid {
-        grid-template-columns: 1fr;
-    }
-
-    /* Form rows */
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    /* Mileage filters wrap */
-    .mileage-filters {
-        flex-direction: column;
-    }
-
-    /* Tables scroll horizontally */
-    .table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* Titlebar adjustments */
+    /* ======== TITLEBAR ======== */
     .titlebar {
-        height: 44px;
-        padding: 0 8px;
+        height: 50px;
+        padding: 0 12px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
     }
 
-    .titlebar-app-name {
-        font-size: 13px;
+    .titlebar-logo {
+        width: 28px;
+        height: 28px;
+    }
+
+    .app-title {
+        font-size: 14px;
+        font-weight: 600;
     }
 
     .titlebar-center {
         position: static;
         transform: none;
+    }
+
+    .titlebar-right {
+        gap: 6px;
+    }
+
+    .role-badge {
+        font-size: 8px;
+        padding: 2px 5px;
     }
 
     .user-badge {
@@ -399,60 +400,52 @@
         display: none;
     }
 
-    /* Status bar */
+    .titlebar-btn {
+        padding: 6px 10px;
+        font-size: 16px;
+    }
+
     .statusbar {
         display: none;
     }
 
-    /* Panel toolbar */
+    /* ======== CONTENT ======== */
+    .panel-content {
+        padding: 16px 12px;
+    }
+
     .panel-toolbar {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 16px;
     }
 
     .panel-toolbar h2 {
-        font-size: 16px;
+        font-size: 18px;
     }
 
-    /* Alert filters wrap */
-    .alerts-filters {
-        flex-wrap: wrap;
+    .toolbar-actions {
+        display: flex;
+        width: 100%;
     }
 
-    /* Modal responsive */
-    .modal-container {
-        width: 95vw;
-        max-height: 90vh;
+    .toolbar-actions .btn {
+        flex: 1;
+        justify-content: center;
+        padding: 10px 14px;
+        font-size: 14px;
     }
 
-    .modal-container.modal-lg {
-        width: 95vw;
-    }
-
-    /* Vehicle detail grid */
-    .vehicle-detail-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .vehicle-info-grid {
+    /* ======== STATS ======== */
+    .stats-row {
         grid-template-columns: 1fr 1fr;
+        gap: 10px;
     }
 
-    /* Upload cards */
-    .upload-cards {
-        grid-template-columns: 1fr;
-    }
-
-    /* Search bar */
-    .search-bar {
-        margin-bottom: 12px;
-    }
-
-    /* Stat card */
     .stat-card {
-        padding: 14px;
-        gap: 12px;
+        padding: 14px 12px;
+        gap: 10px;
     }
 
     .stat-value {
@@ -465,11 +458,339 @@
         font-size: 16px;
     }
 
-    /* Toast on mobile */
+    .stat-label {
+        font-size: 11px;
+    }
+
+    /* ======== CHARTS ======== */
+    .charts-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .chart-card {
+        padding: 16px 12px;
+    }
+
+    .chart-card canvas {
+        max-height: 200px;
+    }
+
+    /* ======== TABLES → MOBILE CARDS ======== */
+    .table-container,
+    .fleet-table-container {
+        overflow-x: visible;
+        -webkit-overflow-scrolling: touch;
+        border: none;
+        border-radius: 0;
+    }
+
+    .data-table,
+    .fleet-table {
+        min-width: 100%;
+    }
+
+    .data-table thead,
+    .fleet-table thead {
+        display: none;
+    }
+
+    .data-table tbody,
+    .fleet-table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .data-table tbody tr,
+    .fleet-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 14px;
+        gap: 4px;
+    }
+
+    .data-table tbody tr:hover,
+    .fleet-table tbody tr:hover {
+        border-color: var(--accent-blue);
+    }
+
+    .data-table td,
+    .fleet-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 5px 0;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 13px;
+    }
+
+    .data-table td:last-child,
+    .fleet-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Mobile card labels via nth-child */
+    #fleet-overview-body td:nth-child(1)::before { content: "Vehicle ID"; }
+    #fleet-overview-body td:nth-child(2)::before { content: "Registration"; }
+    #fleet-overview-body td:nth-child(3)::before { content: "Type"; }
+    #fleet-overview-body td:nth-child(4)::before { content: "Driver"; }
+    #fleet-overview-body td:nth-child(5)::before { content: "Since Service"; }
+    #fleet-overview-body td:nth-child(6)::before { content: "Remaining"; }
+    #fleet-overview-body td:nth-child(7)::before { content: "Status"; }
+
+    #vehicles-table-body td:nth-child(1)::before { content: "Vehicle ID"; }
+    #vehicles-table-body td:nth-child(2)::before { content: "Registration"; }
+    #vehicles-table-body td:nth-child(3)::before { content: "Type"; }
+    #vehicles-table-body td:nth-child(4)::before { content: "Driver"; }
+    #vehicles-table-body td:nth-child(5)::before { content: "Since Service"; }
+    #vehicles-table-body td:nth-child(6)::before { content: "Remaining"; }
+    #vehicles-table-body td:nth-child(7)::before { content: "Status"; }
+    #vehicles-table-body td:nth-child(8)::before { content: "Actions"; }
+
+    #mileage-table-body td:nth-child(1)::before { content: "Date/Time"; }
+    #mileage-table-body td:nth-child(2)::before { content: "Vehicle ID"; }
+    #mileage-table-body td:nth-child(3)::before { content: "Registration"; }
+    #mileage-table-body td:nth-child(4)::before { content: "Previous"; }
+    #mileage-table-body td:nth-child(5)::before { content: "New"; }
+    #mileage-table-body td:nth-child(6)::before { content: "Added"; }
+    #mileage-table-body td:nth-child(7)::before { content: "Logged By"; }
+
+    #maintenance-table-body td:nth-child(1)::before { content: "Date"; }
+    #maintenance-table-body td:nth-child(2)::before { content: "Vehicle"; }
+    #maintenance-table-body td:nth-child(3)::before { content: "Artisan"; }
+    #maintenance-table-body td:nth-child(4)::before { content: "Contact"; }
+    #maintenance-table-body td:nth-child(5)::before { content: "Repair Work"; }
+    #maintenance-table-body td:nth-child(6)::before { content: "Cost"; }
+    #maintenance-table-body td:nth-child(7)::before { content: "Submitted By"; }
+    #maintenance-table-body td:nth-child(8)::before { content: "Mileage Reset"; }
+
+    #expiration-table-body td:nth-child(1)::before { content: "Vehicle"; }
+    #expiration-table-body td:nth-child(2)::before { content: "Registration"; }
+    #expiration-table-body td:nth-child(3)::before { content: "RW Start"; }
+    #expiration-table-body td:nth-child(4)::before { content: "RW Expiry"; }
+    #expiration-table-body td:nth-child(5)::before { content: "RW Status"; }
+    #expiration-table-body td:nth-child(6)::before { content: "Ins. Date"; }
+    #expiration-table-body td:nth-child(7)::before { content: "Ins. Expiry"; }
+    #expiration-table-body td:nth-child(8)::before { content: "Ins. Status"; }
+    #expiration-table-body td:nth-child(9)::before { content: "Actions"; }
+
+    #users-table-body td:nth-child(1)::before { content: "Name"; }
+    #users-table-body td:nth-child(2)::before { content: "Email"; }
+    #users-table-body td:nth-child(3)::before { content: "Staff ID"; }
+    #users-table-body td:nth-child(4)::before { content: "Role"; }
+    #users-table-body td:nth-child(5)::before { content: "Status"; }
+    #users-table-body td:nth-child(6)::before { content: "Permissions"; }
+    #users-table-body td:nth-child(7)::before { content: "Actions"; }
+
+    .data-table td::before,
+    .fleet-table td::before {
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        min-width: 95px;
+        flex-shrink: 0;
+    }
+
+    /* Mileage bar in card layout */
+    .mileage-bar-inline {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .mileage-bar-bg {
+        width: 100% !important;
+    }
+
+    /* ======== SEARCH & FILTERS ======== */
+    .search-bar {
+        margin-bottom: 12px;
+    }
+
+    .search-bar input {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .mileage-filters {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .mileage-filters select,
+    .mileage-filters input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .alerts-filters {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .alert-filter-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    /* ======== REPORTS ======== */
+    .reports-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .report-card {
+        padding: 16px;
+    }
+
+    .report-actions {
+        flex-wrap: wrap;
+    }
+
+    .report-actions .btn {
+        flex: 1;
+        justify-content: center;
+        padding: 10px;
+    }
+
+    /* ======== MODALS (slide-up sheet) ======== */
+    .modal-container {
+        width: 100vw;
+        max-width: 100vw;
+        max-height: 92vh;
+        margin: 0;
+        border-radius: 16px 16px 0 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        animation: slideUpModal 0.3s ease;
+    }
+
+    @keyframes slideUpModal {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-container.modal-lg {
+        width: 100vw;
+        max-width: 100vw;
+    }
+
+    .modal-header {
+        padding: 14px 16px;
+        position: sticky;
+        top: 0;
+        background: var(--bg-secondary);
+        z-index: 1;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .modal-header::before {
+        content: "";
+        display: block;
+        width: 36px;
+        height: 4px;
+        background: var(--border-color);
+        border-radius: 2px;
+        margin: 0 auto 10px;
+    }
+
+    .modal-header h3 {
+        font-size: 16px;
+    }
+
+    .modal-close {
+        font-size: 24px;
+        padding: 6px 10px;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--bg-secondary);
+        padding: 12px 16px;
+        margin: 0 -16px -16px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .modal-footer .btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+
+    /* ======== FORMS ======== */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* Prevents iOS auto-zoom */
+        padding: 10px 12px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    /* ======== VEHICLE DETAILS ======== */
+    .vehicle-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .vehicle-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    /* ======== SECTIONS ======== */
+    .recent-activity,
+    .vehicle-quickview {
+        padding: 14px;
+    }
+
+    .recent-activity h3,
+    .vehicle-quickview h3 {
+        font-size: 14px;
+    }
+
+    .upload-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .upload-dropzone {
+        padding: 16px;
+    }
+
+    .settings-content {
+        max-width: 100%;
+    }
+
+    .setting-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    /* ======== TOAST ======== */
     .toast-container {
         left: 8px;
         right: 8px;
-        bottom: 64px;
+        bottom: 68px;
     }
 
     .toast {
@@ -477,11 +798,29 @@
         max-width: 100%;
     }
 
-    /* Login screen responsive */
+    /* ======== LOGIN ======== */
     .login-container {
-        width: 90vw;
+        width: 92vw;
         max-width: 400px;
-        padding: 24px;
+        padding: 24px 20px;
+    }
+
+    .login-header h1 {
+        font-size: 20px;
+    }
+
+    /* ======== ALERTS ======== */
+    .alert-item {
+        padding: 12px;
+    }
+
+    .alert-empty {
+        padding: 30px;
+    }
+
+    /* ======== EXPIRATION ======== */
+    .expiration-summary {
+        flex-direction: column;
     }
 }
 
@@ -491,30 +830,154 @@
 @media (max-width: 480px) {
     .stats-row {
         grid-template-columns: 1fr;
-    }
-
-    .vehicle-info-grid {
-        grid-template-columns: 1fr;
+        gap: 8px;
     }
 
     .stat-card {
-        padding: 12px;
+        padding: 12px 10px;
+        gap: 10px;
     }
 
     .stat-value {
         font-size: 20px;
     }
 
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
     .panel-content {
-        padding: 8px;
+        padding: 12px 8px;
+    }
+
+    .panel-toolbar h2 {
+        font-size: 16px;
+    }
+
+    .vehicle-info-grid {
+        grid-template-columns: 1fr;
     }
 
     .action-btn-group {
         flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .titlebar {
+        padding: 0 8px;
     }
 
     .titlebar-logo {
         width: 24px;
         height: 24px;
+    }
+
+    .app-title {
+        font-size: 12px;
+    }
+
+    /* Compact bottom nav for small phones */
+    .activity-btn {
+        min-width: 48px;
+        padding: 5px 2px 3px;
+    }
+
+    .activity-btn i {
+        font-size: 16px;
+    }
+
+    .activity-label {
+        font-size: 8px;
+    }
+
+    .chart-card {
+        padding: 12px 8px;
+    }
+
+    .chart-card canvas {
+        max-height: 160px;
+    }
+
+    .login-container {
+        padding: 20px 16px;
+    }
+
+    .login-logo-wrapper {
+        width: 70px;
+        height: 70px;
+    }
+
+    .login-logo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .login-header h1 {
+        font-size: 18px;
+    }
+
+    .report-card {
+        padding: 14px 12px;
+    }
+
+    .report-icon {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+}
+
+/* =============================================
+   Landscape orientation
+   ============================================= */
+@media (max-height: 500px) and (orientation: landscape) {
+    .activity-bar {
+        height: auto;
+    }
+
+    .activity-btn {
+        padding: 4px 6px;
+        min-width: 50px;
+    }
+
+    .activity-btn i {
+        font-size: 14px;
+    }
+
+    .activity-label {
+        font-size: 8px;
+    }
+
+    .main-layout {
+        padding-bottom: 44px;
+    }
+
+    .modal-container {
+        max-height: 95vh;
+    }
+}
+
+/* =============================================
+   Safe area (notched phones)
+   ============================================= */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    @media (max-width: 768px) {
+        .activity-bar {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .main-layout {
+            padding-bottom: calc(60px + env(safe-area-inset-bottom));
+        }
+
+        .toast-container {
+            bottom: calc(68px + env(safe-area-inset-bottom));
+        }
+
+        .titlebar {
+            padding-top: env(safe-area-inset-top);
+            height: calc(50px + env(safe-area-inset-top));
+        }
     }
 }
